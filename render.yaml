@@ -3,6 +3,7 @@ services:
   - type: web
     name: expense-django
     runtime: python
+    rootDir: django-backend
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn expense_backend.wsgi:application
     envVars:
@@ -19,8 +20,9 @@ services:
   - type: web
     name: expense-node
     runtime: node
+    rootDir: node-backend
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
     envVars:
       - key: MONGO_URI
         sync: false # Render will prompt you for this value
@@ -36,8 +38,9 @@ services:
   - type: web
     name: expense-frontend
     runtime: static
-    buildCommand: cd client && npm install && npm run build
-    publishPath: client/dist
+    rootDir: client
+    buildCommand: npm install && npm run build
+    publishPath: dist
     envVars:
       - key: VITE_API_URL
         fromService:
