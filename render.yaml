@@ -3,9 +3,8 @@ services:
   - type: web
     name: expense-django
     runtime: python
-    rootDir: django-backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn expense_backend.wsgi:application
+    buildCommand: "cd django-backend && pip install -r requirements.txt"
+    startCommand: "cd django-backend && gunicorn expense_backend.wsgi:application"
     envVars:
       - key: MONGO_URI
         sync: false
@@ -20,9 +19,8 @@ services:
   - type: web
     name: expense-node
     runtime: node
-    rootDir: node-backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: "cd node-backend && npm install"
+    startCommand: "cd node-backend && npm start"
     envVars:
       - key: MONGO_URI
         sync: false
@@ -37,9 +35,8 @@ services:
   # React Frontend (Static Site)
   - type: static
     name: expense-frontend
-    rootDir: client
-    buildCommand: npm install && npm run build
-    publishPath: dist
+    buildCommand: "cd client && npm install && npm run build"
+    publishPath: "client/dist"
     envVars:
       - key: VITE_API_URL
         fromService:
