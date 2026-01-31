@@ -3,8 +3,8 @@ services:
   - type: web
     name: expense-django
     runtime: python
-    buildCommand: "pip install -r django-backend/requirements.txt"
-    startCommand: "cd django-backend && gunicorn expense_backend.wsgi:application"
+    buildCommand: "cd django-backend && pip install -r requirements.txt"
+    startCommand: "cd django-backend && gunicorn expense_backend.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: MONGO_URI
         sync: false
