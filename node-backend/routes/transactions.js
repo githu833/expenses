@@ -18,7 +18,11 @@ const auth = (req, res, next) => {
     }
 };
 
-const DJANGO_URL = process.env.DJANGO_API_URL || 'http://localhost:8000';
+let djangoUrl = process.env.DJANGO_API_URL || 'http://localhost:8000';
+if (!djangoUrl.startsWith('http')) {
+    djangoUrl = `http://${djangoUrl}`;
+}
+const DJANGO_URL = djangoUrl;
 
 // Proxy transaction requests to Django
 router.use('/', auth, async (req, res) => {
