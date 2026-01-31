@@ -1,0 +1,11 @@
+{
+    "name": "expense-tracker-root",
+    "private": true,
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "postinstall": "echo 'Root install complete'",
+        "start": "echo 'Please use the subdirectories to start services'"
+    }
+}
