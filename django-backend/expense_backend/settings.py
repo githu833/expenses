@@ -19,13 +19,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+import os
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%ht5h+5(5%qu_=6pmzgvzyj5c3%^0$6s!q%rc=!=m#cs88@9-j'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -125,6 +127,7 @@ CORS_ALLOW_ALL_ORIGINS = True # In production, restrict this
 
 # MongoDB Configuration using pymongo
 import pymongo
-MONGO_CLIENT = pymongo.MongoClient("mongodb://localhost:27017/")
+MONGO_URI = os.environ.get('MONGO_URI', "mongodb://localhost:27017/")
+MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT["expense_tracker"]
 TRANSACTIONS_COLLECTION = MONGO_DB["transactions"]

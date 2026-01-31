@@ -1,0 +1,47 @@
+services:
+  # Django Backend
+  - type: web
+    name: expense-django
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn expense_backend.wsgi:application
+    envVars:
+      - key: MONGO_URI
+        fromConfig: MONGO_URI
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+
+  # Node.js API Gateway
+  - type: web
+    name: expense-node
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGO_URI
+        fromConfig: MONGO_URI
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DJANGO_API_URL
+        fromService:
+          name: expense-django
+          type: web
+          property: host
+
+  # React Frontend
+  - type: web
+    name: expense-frontend
+    runtime: static
+    buildCommand: cd client && npm install && npm run build
+    publishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: expense-node
+          type: web
+          property: host
+        suffix: /api
