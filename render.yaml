@@ -3,8 +3,8 @@ services:
   - type: web
     name: expense-django
     runtime: python
-    buildCommand: "cd django-backend && pip install -r requirements.txt"
-    startCommand: "cd django-backend && gunicorn expense_backend.wsgi:application --bind 0.0.0.0:$PORT"
+    buildCommand: "pip install -r django-backend/requirements.txt"
+    startCommand: "cd django-backend && gunicorn expense_backend.wsgi:application"
     envVars:
       - key: MONGO_URI
         sync: false
@@ -14,6 +14,8 @@ services:
         value: False
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: PYTHON_VERSION
+        value: 3.10.12
 
   # Node.js API Gateway
   - type: web
@@ -26,6 +28,8 @@ services:
         sync: false
       - key: JWT_SECRET
         generateValue: true
+      - key: NODE_VERSION
+        value: 20.10.0
       - key: DJANGO_API_URL
         fromService:
           name: expense-django
@@ -42,6 +46,7 @@ services:
         fromService:
           name: expense-node
           type: web
-          property: host
-        prefix: https://
+          property: url
         suffix: /api
+      - key: NODE_VERSION
+        value: 20.10.0
