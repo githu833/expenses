@@ -3,6 +3,7 @@
     "private": true,
     "description": "Root package.json for Render deployment",
     "scripts": {
+        "start": "node node-backend/server.js",
         "install-all": "npm install --prefix client && npm install --prefix node-backend"
     }
 }
