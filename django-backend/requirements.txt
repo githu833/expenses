@@ -3,7 +3,6 @@ dataclasses==0.6
 Django==6.0.1
 django-cors-headers==4.9.0
 djangorestframework==3.16.1
-djongo==1.2.31
 dnspython==2.8.0
 gunicorn==24.1.1
 packaging==26.0
