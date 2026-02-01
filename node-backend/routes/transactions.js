@@ -19,13 +19,20 @@ const auth = (req, res, next) => {
 };
 
 let djangoUrl = process.env.DJANGO_API_URL;
+let urlSource = 'Environment Variable';
 
-// On Render, if the variable is missing, try the standard internal hostname
-if (!djangoUrl && process.env.RENDER) {
-    console.log('[Proxy] DJANGO_API_URL missing on Render, using internal fallback: http://expense-django:10000');
-    djangoUrl = 'http://expense-django:10000';
-} else if (!djangoUrl) {
-    djangoUrl = 'http://127.0.0.1:8000';
+if (!djangoUrl) {
+    if (process.env.RENDER) {
+        // Render often uses the service name as host, but let's try a few variants
+        djangoUrl = 'http://expense-django:10000';
+        urlSource = 'Render internal fallback';
+        console.log(`[Proxy] DJANGO_API_URL missing. Using ${urlSource}: ${djangoUrl}`);
+    } else {
+        djangoUrl = 'http://127.0.0.1:8000';
+        urlSource = 'Local default';
+    }
+} else {
+    console.log(`[Proxy] Using DJANGO_API_URL from environment: ${djangoUrl}`);
 }
 
 // Clean up the URL
