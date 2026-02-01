@@ -6,6 +6,6 @@
     },
     "scripts": {
         "postinstall": "echo 'Root install complete'",
-        "start": "echo 'Please use the subdirectories to start services'"
+        "start": "echo 'ERROR: Render is looking in the wrong folder. Please set the Cloud Service Root Directory to node-backend, django-backend, or client. See task.md for help.' && exit 1"
     }
 }
