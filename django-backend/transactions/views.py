@@ -27,6 +27,8 @@ def add_transaction(req):
     try:
         amount = float(amount)
         collection = get_db_collection()
+        if collection is None:
+            return Response({"error": "Database connection not initialized. Please check MONGO_URI in Render dashboard."}, status=503)
         
         # Get last balance for this user
         last_transaction = collection.find_one(
@@ -66,6 +68,8 @@ def get_history(req):
         return Response({"error": "Unauthorized"}, status=401)
     
     collection = get_db_collection()
+    if collection is None:
+        return Response({"error": "Database connection not initialized"}, status=503)
     transactions = list(collection.find({"user_id": user_id}).sort("timestamp", -1))
     
     for t in transactions:
@@ -80,6 +84,8 @@ def get_summary(req):
         return Response({"error": "Unauthorized"}, status=401)
     
     collection = get_db_collection()
+    if collection is None:
+        return Response({"error": "Database connection not initialized"}, status=503)
     
     # Calculate totals
     pipeline = [
