@@ -34,7 +34,8 @@ const Dashboard = () => {
 
     return (
         <div className="fade-in">
-            <h1 style={{ marginBottom: '2rem' }}>Financial Overview</h1>
+            <h1 style={{ marginBottom: '2rem' }}>Financial Overview (Live v2)</h1>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Build ID: 2026-02-01-1605</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                 {cards.map((card, idx) => (
                     <div key={idx} className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
