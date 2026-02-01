@@ -54,6 +54,6 @@ services:
           name: expense-node
           type: web
           property: url
-        suffix: api
+        suffix: /api
       - key: NODE_VERSION
         value: 20.10.0
