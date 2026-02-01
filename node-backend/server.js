@@ -45,7 +45,10 @@ const mongoURI = process.env.MONGO_URI;
 if (!mongoURI) {
     console.error('CRITICAL: MONGO_URI is not defined.');
 } else {
-    mongoose.connect(mongoURI)
+    mongoose.connect(mongoURI, {
+        serverSelectionTimeoutMS: 5000, // 5 seconds
+        socketTimeoutMS: 45000,       // 45 seconds
+    })
         .then(() => console.log('MongoDB: Connected successfully'))
         .catch(err => {
             console.error('MongoDB: Connection failed:', err.message);
