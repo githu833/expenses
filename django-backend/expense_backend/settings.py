@@ -136,7 +136,27 @@ CORS_ALLOW_ALL_ORIGINS = True # In production, restrict this
 
 # MongoDB Configuration using pymongo
 import pymongo
-MONGO_URI = os.environ.get('MONGO_URI', "mongodb://localhost:27017/")
-MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
+import sys
+
+MONGO_URI = os.environ.get('MONGO_URI')
+if not MONGO_URI:
+    print("--- ENV VERIFICATION (DJANGO) ---", file=sys.stderr)
+    print("FATAL: MONGO_URI is not defined in environment variables.", file=sys.stderr)
+    print("---------------------------------", file=sys.stderr)
+    # Default to localhost but it will likely fail
+    MONGO_URI = "mongodb://localhost:27017/"
+else:
+    print("--- ENV VERIFICATION (DJANGO) ---", file=sys.stderr)
+    print("MONGO_URI is defined.", file=sys.stderr)
+    print("---------------------------------", file=sys.stderr)
+
+try:
+    MONGO_CLIENT = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    # Trigger a command to check connection
+    MONGO_CLIENT.admin.command('ping')
+    print("MongoDB (Django) connection established successfully.", file=sys.stderr)
+except Exception as e:
+    print(f"MongoDB (Django) connection failed: {e}", file=sys.stderr)
+
 MONGO_DB = MONGO_CLIENT["expense_tracker"]
 TRANSACTIONS_COLLECTION = MONGO_DB["transactions"]

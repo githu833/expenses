@@ -17,7 +17,9 @@ const Register = () => {
             localStorage.setItem('user', JSON.stringify({ email }));
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.msg || 'Registration failed');
+            const msg = err.response?.data?.msg || 'Registration failed';
+            const detail = err.response?.data?.error ? `: ${err.response.data.error}` : '';
+            setError(`${msg}${detail}`);
         }
     };
 
