@@ -45,18 +45,34 @@ router.use('/', auth, async (req, res) => {
         console.log(`[Proxy] Success: ${url}, status: ${response.status}`);
         res.status(response.status).json(response.data);
     } catch (err) {
-        const status = err.response ? err.response.status : 500;
-        let data = err.response ? err.response.data : { msg: 'Django server connection failed' };
+        console.error(`[Proxy Error] Error talking to Django at ${DJANGO_URL}${req.url}`);
 
-        // If it's a string (like a Django error page), wrap it or truncate it
-        if (typeof data === 'string') {
-            console.error(`[Proxy] Error: Django returned HTML response (likely a 500 or 404)`);
-            data = { msg: 'Internal Django Error', detail: data.substring(0, 200) + '...' };
+        if (err.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const status = err.response.status;
+            let data = err.response.data;
+
+            if (typeof data === 'string') {
+                console.error(`[Proxy] Django returned HTML/Text (Status ${status})`);
+                data = { msg: 'Internal Django Error', detail: data.substring(0, 200) + '...' };
+            } else {
+                console.error(`[Proxy] Django responded with error:`, JSON.stringify(data));
+            }
+            res.status(status).json(data);
+        } else if (err.request) {
+            // The request was made but no response was received
+            console.error(`[Proxy] No response received from Django. Is it running?`, err.message);
+            res.status(503).json({
+                msg: 'Django server connection failed',
+                error: err.message,
+                detail: `Attempted to connect to ${DJANGO_URL}`
+            });
         } else {
-            console.error(`[Proxy] Error to ${DJANGO_URL}${req.url}: Status ${status}`, JSON.stringify(data));
+            // Something happened in setting up the request that triggered an Error
+            console.error(`[Proxy] Request Setup Error:`, err.message);
+            res.status(500).json({ msg: 'Proxy Request Setup Error', error: err.message });
         }
-
-        res.status(status).json(data);
     }
 });
 

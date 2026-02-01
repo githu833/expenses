@@ -33,10 +33,7 @@ services:
       - key: NODE_VERSION
         value: 20.10.0
       - key: DJANGO_API_URL
-        fromService:
-          name: expense-django
-          type: web
-          property: host
+        value: http://expense-django:10000
 
   # React Frontend (Static Site)
   - type: static
