@@ -99,6 +99,15 @@ try {
     process.exit(1);
 }
 
+// Global 404 handler for API
+app.use('/api/*', (req, res) => {
+    console.warn(`[404] Resource not found: ${req.method} ${req.originalUrl}`);
+    res.status(404).json({
+        msg: 'Route not found on API Gateway',
+        endpoint: req.originalUrl
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`--- STARTUP SUCCESSFUL ---`);

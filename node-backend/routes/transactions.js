@@ -47,7 +47,6 @@ router.use('/', auth, async (req, res) => {
     try {
         const url = `${DJANGO_URL}${req.url}`;
         console.log(`[Proxy] ${req.method} ${req.url} -> ${url}`);
-        console.log(`[Proxy] Headers:`, { 'X-User-ID': req.user.id });
 
         const response = await axios({
             method: req.method,
@@ -58,7 +57,8 @@ router.use('/', auth, async (req, res) => {
                 'Content-Type': 'application/json',
                 'X-User-ID': req.user.id,
                 'X-User-Email': req.user.email
-            }
+            },
+            timeout: 10000 // 10 second timeout
         });
         console.log(`[Proxy] Success: ${url}, status: ${response.status}`);
         res.status(response.status).json(response.data);
@@ -66,31 +66,27 @@ router.use('/', auth, async (req, res) => {
         console.error(`[Proxy Error] Error talking to Django at ${DJANGO_URL}${req.url}`);
 
         if (err.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
             const status = err.response.status;
             let data = err.response.data;
 
             if (typeof data === 'string') {
                 console.error(`[Proxy] Django returned HTML/Text (Status ${status})`);
-                data = { msg: 'Internal Django Error', detail: data.substring(0, 200) + '...' };
+                data = { msg: 'Internal Django Error', detail: 'The transaction service returned an invalid response. Please check server logs.' };
             } else {
                 console.error(`[Proxy] Django responded with error:`, JSON.stringify(data));
             }
             res.status(status).json(data);
         } else if (err.request) {
-            // The request was made but no response was received
-            console.error(`[Proxy] No response received from Django. Is it running?`, err.message);
+            console.error(`[Proxy] No response received from Django at ${DJANGO_URL}. Is it running?`, err.message);
             res.status(503).json({
-                msg: 'Django server connection failed',
+                msg: 'Transaction Service Unavailable',
                 error: 'CONNECTION_FAILED',
-                detail: `Node could not reach Django at ${DJANGO_URL}. Underlying error: ${err.message}`
+                detail: `The API Gateway could not reach the transaction service at ${DJANGO_URL}. Please ensure the Django backend is running.`
             });
         } else {
-            // Something happened in setting up the request that triggered an Error
             console.log(`[Proxy] Proxy Setup Error:`, err.message);
             res.status(500).json({
-                msg: 'Django Server Error',
+                msg: 'API Gateway Proxy Error',
                 error: 'PROXY_SETUP_ERROR',
                 detail: err.message
             });

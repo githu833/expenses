@@ -1,8 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.conf import settings
-from datetime import datetime
-from bson import ObjectId
+from datetime import datetime, timezone
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_db_collection():
     return settings.TRANSACTIONS_COLLECTION
@@ -11,11 +13,11 @@ def get_db_collection():
 def add_transaction(req):
     user_id = req.headers.get('X-User-ID')
     if not user_id:
-        print("Unauthorized: X-User-ID header missing", flush=True)
+        logger.warning("Unauthorized: X-User-ID header missing")
         return Response({"error": "Unauthorized: Missing X-User-ID header"}, status=401)
     
     data = req.data
-    print(f"Adding transaction for user {user_id}: {data}", flush=True)
+    logger.info(f"Adding transaction for user {user_id}: {data}")
     
     transaction_type = data.get('type') # 'debit' or 'credit'
     amount = data.get('amount')
@@ -28,7 +30,7 @@ def add_transaction(req):
         amount = float(amount)
         collection = get_db_collection()
         if collection is None:
-            return Response({"error": "Database connection not initialized. Please check MONGO_URI in Render dashboard."}, status=503)
+            return Response({"error": "Database connection not initialized."}, status=503)
         
         # Get last balance for this user
         last_transaction = collection.find_one(
@@ -49,16 +51,17 @@ def add_transaction(req):
             "amount": amount,
             "details": details,
             "balance_after": new_balance,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         }
         
         collection.insert_one(transaction)
+        logger.info(f"Transaction added for {user_id}. New balance: {new_balance}")
         
         return Response({"msg": "Transaction added successfully", "new_balance": new_balance})
     except ValueError:
         return Response({"error": "Invalid amount format"}, status=400)
     except Exception as e:
-        print(f"Database error in add_transaction: {str(e)}", flush=True)
+        logger.error(f"Database error in add_transaction: {str(e)}")
         return Response({"error": f"Database error: {str(e)}"}, status=500)
 
 @api_view(['GET'])
@@ -67,6 +70,7 @@ def get_history(req):
     if not user_id:
         return Response({"error": "Unauthorized"}, status=401)
     
+    logger.info(f"Fetching history for user {user_id}")
     collection = get_db_collection()
     if collection is None:
         return Response({"error": "Database connection not initialized"}, status=503)
@@ -83,6 +87,7 @@ def get_summary(req):
     if not user_id:
         return Response({"error": "Unauthorized"}, status=401)
     
+    logger.info(f"Fetching summary for user {user_id}")
     collection = get_db_collection()
     if collection is None:
         return Response({"error": "Database connection not initialized"}, status=503)
@@ -122,8 +127,6 @@ def get_summary(req):
 @api_view(['GET'])
 def get_status(req):
     import os
-    from django.conf import settings
-    
     mongo_uri = os.environ.get('MONGO_URI', 'NOT SET')
     status_code = 200
     db_status = "Unknown"
@@ -140,8 +143,7 @@ def get_status(req):
     return Response({
         "status": "Alive",
         "mongo_uri_present": mongo_uri != 'NOT SET',
-        "mongo_uri_obfuscated": mongo_uri[:15] + "..." if len(mongo_uri) > 15 else mongo_uri,
         "database_connectivity": db_status,
         "django_debug": settings.DEBUG,
-        "details": "This endpoint helps debug Render connectivity issues."
+        "details": "Status check successful"
     }, status=status_code)

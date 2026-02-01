@@ -24,7 +24,22 @@ const Dashboard = () => {
     }, []);
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}><Loader2 className="animate-spin" size={48} /></div>;
-    if (error) return <div style={{ color: 'var(--danger)', textAlign: 'center', marginTop: '4rem' }}>{error}</div>;
+
+    if (error) return (
+        <div style={{ textAlign: 'center', padding: '4rem' }} className="fade-in">
+            <div className="glass-card" style={{ border: '1px solid var(--danger)', maxWidth: '500px', margin: '0 auto' }}>
+                <h3 style={{ color: 'var(--danger)', marginBottom: '1rem' }}>Connection Error</h3>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="btn btn-primary"
+                    style={{ background: 'var(--danger)', margin: '0 auto' }}
+                >
+                    Retry Connection
+                </button>
+            </div>
+        </div>
+    );
 
     const cards = [
         { title: 'Remaining Balance', value: summary?.balance || 0, icon: <CreditCard />, color: 'var(--primary)' },
