@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { transactionAPI } from '../api';
+import { transactionAPI, api } from '../api';
 import { TrendingUp, TrendingDown, CreditCard, Loader2 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -14,7 +14,8 @@ const Dashboard = () => {
                 setSummary(data);
             } catch (err) {
                 console.error(err);
-                setError('Failed to fetch financial overview. Please ensure the backends are running.');
+                const targetUrl = `${api.defaults.baseURL}/transactions/summary/`;
+                setError(`Failed to fetch financial overview. (Target: ${targetUrl})`);
             } finally {
                 setLoading(false);
             }
@@ -37,7 +38,7 @@ const Dashboard = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                 {cards.map((card, idx) => (
                     <div key={idx} className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: `1px solid ${card.color}40`, color: card.color, padding: '1rem', borderRadius: '1rem' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: `1px solid ${card.color} 40`, color: card.color, padding: '1rem', borderRadius: '1rem' }}>
                             {React.cloneElement(card.icon, { size: 32 })}
                         </div>
                         <div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { transactionAPI } from '../api';
+import { transactionAPI, api } from '../api';
 import { ArrowUpRight, ArrowDownLeft, Clock, Calendar } from 'lucide-react';
 
 const History = () => {
@@ -14,7 +14,8 @@ const History = () => {
                 setTransactions(data);
             } catch (err) {
                 console.error(err);
-                setError('Failed to fetch transaction history. Please ensure the backends are running.');
+                const targetUrl = `${api.defaults.baseURL}/transactions/history/`;
+                setError(`Failed to fetch transaction history. (Target: ${targetUrl})`);
             } finally {
                 setLoading(false);
             }
