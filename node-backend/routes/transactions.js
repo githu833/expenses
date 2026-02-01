@@ -19,6 +19,8 @@ const auth = (req, res, next) => {
 };
 
 let djangoUrl = process.env.DJANGO_API_URL || 'http://localhost:8000';
+// Remove trailing slash if present
+djangoUrl = djangoUrl.replace(/\/$/, '');
 if (!djangoUrl.startsWith('http')) {
     djangoUrl = `http://${djangoUrl}`;
 }
