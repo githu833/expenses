@@ -12,7 +12,7 @@ def add_transaction(req):
     user_id = req.headers.get('X-User-ID')
     if not user_id:
         print("Unauthorized: X-User-ID header missing", flush=True)
-        return Response({"error": "Unauthorized"}, status=401)
+        return Response({"error": "Unauthorized: Missing X-User-ID header"}, status=401)
     
     data = req.data
     print(f"Adding transaction for user {user_id}: {data}", flush=True)
@@ -26,36 +26,38 @@ def add_transaction(req):
     
     try:
         amount = float(amount)
-    except (ValueError, TypeError):
-        return Response({"error": "Invalid amount"}, status=400)
-    
-    collection = get_db_collection()
-    
-    # Get last balance for this user
-    last_transaction = collection.find_one(
-        {"user_id": user_id},
-        sort=[("timestamp", -1)]
-    )
-    
-    current_balance = last_transaction.get('balance_after', 0) if last_transaction else 0
-    
-    if transaction_type == 'credit':
-        new_balance = current_balance + amount
-    else: # debit
-        new_balance = current_balance - amount
+        collection = get_db_collection()
         
-    transaction = {
-        "user_id": user_id,
-        "type": transaction_type,
-        "amount": amount,
-        "details": details,
-        "balance_after": new_balance,
-        "timestamp": datetime.utcnow()
-    }
-    
-    collection.insert_one(transaction)
-    
-    return Response({"msg": "Transaction added", "new_balance": new_balance})
+        # Get last balance for this user
+        last_transaction = collection.find_one(
+            {"user_id": user_id},
+            sort=[("timestamp", -1)]
+        )
+        
+        current_balance = last_transaction.get('balance_after', 0) if last_transaction else 0
+        
+        if transaction_type == 'credit':
+            new_balance = current_balance + amount
+        else: # debit
+            new_balance = current_balance - amount
+            
+        transaction = {
+            "user_id": user_id,
+            "type": transaction_type,
+            "amount": amount,
+            "details": details,
+            "balance_after": new_balance,
+            "timestamp": datetime.utcnow()
+        }
+        
+        collection.insert_one(transaction)
+        
+        return Response({"msg": "Transaction added successfully", "new_balance": new_balance})
+    except ValueError:
+        return Response({"error": "Invalid amount format"}, status=400)
+    except Exception as e:
+        print(f"Database error in add_transaction: {str(e)}", flush=True)
+        return Response({"error": f"Database error: {str(e)}"}, status=500)
 
 @api_view(['GET'])
 def get_history(req):

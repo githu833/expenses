@@ -18,7 +18,8 @@ const AddEntry = () => {
             navigate('/');
         } catch (err) {
             console.error(err);
-            alert('Failed to add transaction');
+            const errorMessage = err.response?.data?.error || err.response?.data?.msg || 'Failed to add transaction. Please ensure all backends are running.';
+            alert(errorMessage);
         } finally {
             setLoading(false);
         }

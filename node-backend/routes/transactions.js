@@ -28,7 +28,8 @@ const DJANGO_URL = djangoUrl;
 router.use('/', auth, async (req, res) => {
     try {
         const url = `${DJANGO_URL}${req.url}`;
-        console.log(`Proxying ${req.method} request to: ${url}`);
+        console.log(`[Proxy] ${req.method} ${req.url} -> ${url}`);
+        console.log(`[Proxy] Headers:`, { 'X-User-ID': req.user.id });
 
         const response = await axios({
             method: req.method,
@@ -41,12 +42,20 @@ router.use('/', auth, async (req, res) => {
                 'X-User-Email': req.user.email
             }
         });
-        console.log(`Successfully proxied to ${url}, status: ${response.status}`);
+        console.log(`[Proxy] Success: ${url}, status: ${response.status}`);
         res.status(response.status).json(response.data);
     } catch (err) {
         const status = err.response ? err.response.status : 500;
-        const data = err.response ? err.response.data : { msg: 'Django server error' };
-        console.error(`Proxy error to ${DJANGO_URL}${req.url}: Status ${status}`, data);
+        let data = err.response ? err.response.data : { msg: 'Django server connection failed' };
+
+        // If it's a string (like a Django error page), wrap it or truncate it
+        if (typeof data === 'string') {
+            console.error(`[Proxy] Error: Django returned HTML response (likely a 500 or 404)`);
+            data = { msg: 'Internal Django Error', detail: data.substring(0, 200) + '...' };
+        } else {
+            console.error(`[Proxy] Error to ${DJANGO_URL}${req.url}: Status ${status}`, JSON.stringify(data));
+        }
+
         res.status(status).json(data);
     }
 });
