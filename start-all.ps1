@@ -1,6 +1,6 @@
 # Start all services for Expense Tracker
 
-echo "Starting Expense Tracker Services..."
+Write-Output "Starting Expense Tracker Services..."
 
 # 1. Start Node Gateway
 Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", "cd 'node-backend'; cmd /c npm start"
@@ -11,7 +11,7 @@ Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", 
 # 3. Start Frontend
 Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", "cd 'client'; cmd /c npm run dev"
 
-echo "Services are starting in separate windows."
-echo "Node Gateway: http://127.0.0.1:5000"
-echo "Django Service: http://127.0.0.1:8000"
-echo "Frontend: Check Vite output (usually http://127.0.0.1:5173)"
+Write-Output "Services are starting in separate windows."
+Write-Output "Node Gateway: http://127.0.0.1:5000"
+Write-Output "Django Service: http://127.0.0.1:8000"
+Write-Output "Frontend: Check Vite output (usually http://127.0.0.1:5173)"

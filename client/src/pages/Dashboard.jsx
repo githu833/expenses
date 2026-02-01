@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, CreditCard, Loader2 } from 'lucide-react';
 const Dashboard = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchSummary = async () => {
@@ -13,6 +14,7 @@ const Dashboard = () => {
                 setSummary(data);
             } catch (err) {
                 console.error(err);
+                setError('Failed to fetch financial overview. Please ensure the backends are running.');
             } finally {
                 setLoading(false);
             }
@@ -21,6 +23,7 @@ const Dashboard = () => {
     }, []);
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}><Loader2 className="animate-spin" size={48} /></div>;
+    if (error) return <div style={{ color: 'var(--danger)', textAlign: 'center', marginTop: '4rem' }}>{error}</div>;
 
     const cards = [
         { title: 'Remaining Balance', value: summary?.balance || 0, icon: <CreditCard />, color: 'var(--primary)' },

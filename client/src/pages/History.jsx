@@ -5,6 +5,7 @@ import { ArrowUpRight, ArrowDownLeft, Clock, Calendar } from 'lucide-react';
 const History = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -13,6 +14,7 @@ const History = () => {
                 setTransactions(data);
             } catch (err) {
                 console.error(err);
+                setError('Failed to fetch transaction history. Please ensure the backends are running.');
             } finally {
                 setLoading(false);
             }
@@ -20,7 +22,8 @@ const History = () => {
         fetchHistory();
     }, []);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}>Loading...</div>;
+    if (error) return <div style={{ color: 'var(--danger)', textAlign: 'center', padding: '4rem' }}>{error}</div>;
 
     return (
         <div className="fade-in">
