@@ -18,6 +18,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+export { api };
 export default api;
 export const authAPI = {
     login: (data) => api.post('/auth/login', data),
