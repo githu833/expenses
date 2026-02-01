@@ -11,12 +11,23 @@ def get_db_collection():
 def add_transaction(req):
     user_id = req.headers.get('X-User-ID')
     if not user_id:
+        print("Unauthorized: X-User-ID header missing", flush=True)
         return Response({"error": "Unauthorized"}, status=401)
     
     data = req.data
+    print(f"Adding transaction for user {user_id}: {data}", flush=True)
+    
     transaction_type = data.get('type') # 'debit' or 'credit'
-    amount = float(data.get('amount', 0))
+    amount = data.get('amount')
     details = data.get('details', '')
+
+    if not transaction_type or amount is None:
+        return Response({"error": "Type and amount are required"}, status=400)
+    
+    try:
+        amount = float(amount)
+    except (ValueError, TypeError):
+        return Response({"error": "Invalid amount"}, status=400)
     
     collection = get_db_collection()
     

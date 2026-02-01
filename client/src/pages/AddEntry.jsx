@@ -65,7 +65,7 @@ const AddEntry = () => {
                     <div className="input-group">
                         <label>Amount</label>
                         <div style={{ position: 'relative' }}>
-                            <DollarSign size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <IndianRupee size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                             <input
                                 type="number"
                                 step="0.01"

@@ -28,6 +28,8 @@ const DJANGO_URL = djangoUrl;
 router.use('/', auth, async (req, res) => {
     try {
         const url = `${DJANGO_URL}${req.url}`;
+        console.log(`Proxying ${req.method} request to: ${url}`);
+
         const response = await axios({
             method: req.method,
             url: url,
@@ -39,10 +41,13 @@ router.use('/', auth, async (req, res) => {
                 'X-User-Email': req.user.email
             }
         });
+        console.log(`Successfully proxied to ${url}, status: ${response.status}`);
         res.status(response.status).json(response.data);
     } catch (err) {
-        console.error(err.message);
-        res.status(err.response ? err.response.status : 500).json(err.response ? err.response.data : { msg: 'Django server error' });
+        const status = err.response ? err.response.status : 500;
+        const data = err.response ? err.response.data : { msg: 'Django server error' };
+        console.error(`Proxy error to ${DJANGO_URL}${req.url}: Status ${status}`, data);
+        res.status(status).json(data);
     }
 });
 
