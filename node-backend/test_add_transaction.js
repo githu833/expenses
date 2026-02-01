@@ -14,7 +14,7 @@ const token = jwt.sign({ user }, secret, { expiresIn: '1h' });
 const testTransaction = async () => {
     try {
         console.log('Sending transaction addition request...');
-        const response = await axios.post('http://localhost:5000/api/transactions/add/', {
+        const response = await axios.post('http://127.0.0.1:5000/api/transactions/add/', {
             type: 'credit',
             amount: 100.50,
             details: 'Test Credit Transaction'

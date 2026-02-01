@@ -148,10 +148,13 @@ import sys
 MONGO_URI = os.environ.get('MONGO_URI')
 if not MONGO_URI:
     print("--- ENV VERIFICATION (DJANGO) ---", file=sys.stderr)
-    print("FATAL: MONGO_URI is not defined in environment variables.", file=sys.stderr)
+    if os.environ.get('RENDER'):
+        print("CRITICAL: MONGO_URI is missing on Render. Please add it to your Environment Variables.", file=sys.stderr)
+    else:
+        print("Warning: MONGO_URI is not defined. Defaulting to local MongoDB.", file=sys.stderr)
     print("---------------------------------", file=sys.stderr)
-    # Default to localhost but it will likely fail
-    MONGO_URI = "mongodb://localhost:27017/"
+    # Default to 127.0.0.1 for stability
+    MONGO_URI = "mongodb://127.0.0.1:27017/"
 else:
     print("--- ENV VERIFICATION (DJANGO) ---", file=sys.stderr)
     print("MONGO_URI is defined.", file=sys.stderr)

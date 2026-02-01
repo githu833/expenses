@@ -14,4 +14,4 @@ Start-Process powershell -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", 
 echo "Services are starting in separate windows."
 echo "Node Gateway: http://127.0.0.1:5000"
 echo "Django Service: http://127.0.0.1:8000"
-echo "Frontend: Check Vite output (usually http://localhost:5173)"
+echo "Frontend: Check Vite output (usually http://127.0.0.1:5173)"
