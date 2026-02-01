@@ -159,11 +159,20 @@ else:
 
 try:
     MONGO_CLIENT = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    # Trigger a command to check connection
-    MONGO_CLIENT.admin.command('ping')
-    print("MongoDB (Django) connection established successfully.", file=sys.stderr)
+    # Don't fail the entire startup if ping fails, just log it
+    try:
+        MONGO_CLIENT.admin.command('ping')
+        print("MongoDB (Django) connection established successfully.", file=sys.stderr)
+    except Exception as ping_err:
+        print(f"Warning: MongoDB (Django) ping failed at startup: {ping_err}", file=sys.stderr)
 except Exception as e:
-    print(f"MongoDB (Django) connection failed: {e}", file=sys.stderr)
+    print(f"MongoDB (Django) client initialization failed: {e}", file=sys.stderr)
+    # We still define these so the app doesn't crash on import
+    MONGO_CLIENT = None
 
-MONGO_DB = MONGO_CLIENT["expense_tracker"]
-TRANSACTIONS_COLLECTION = MONGO_DB["transactions"]
+if MONGO_CLIENT:
+    MONGO_DB = MONGO_CLIENT["expense_tracker"]
+    TRANSACTIONS_COLLECTION = MONGO_DB["transactions"]
+else:
+    MONGO_DB = None
+    TRANSACTIONS_COLLECTION = None

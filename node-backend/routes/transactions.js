@@ -83,13 +83,17 @@ router.use('/', auth, async (req, res) => {
             console.error(`[Proxy] No response received from Django. Is it running?`, err.message);
             res.status(503).json({
                 msg: 'Django server connection failed',
-                error: err.message,
-                detail: `Attempted to connect to ${DJANGO_URL}. Underlying error: ${err.message}`
+                error: 'CONNECTION_FAILED',
+                detail: `Node could not reach Django at ${DJANGO_URL}. Underlying error: ${err.message}`
             });
         } else {
             // Something happened in setting up the request that triggered an Error
-            console.error(`[Proxy] Request Setup Error:`, err.message);
-            res.status(500).json({ msg: 'Proxy Request Setup Error', error: err.message });
+            console.log(`[Proxy] Proxy Setup Error:`, err.message);
+            res.status(500).json({
+                msg: 'Django Server Error',
+                error: 'PROXY_SETUP_ERROR',
+                detail: err.message
+            });
         }
     }
 });
