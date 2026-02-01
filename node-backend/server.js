@@ -35,6 +35,11 @@ console.log('--- STARTING UP (ENV VERIFICATION) ---');
 const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
 const missingEnv = requiredEnv.filter(env => !process.env[env]);
 
+console.log(`DJANGO_API_URL exists: ${!!process.env.DJANGO_API_URL}`);
+if (process.env.DJANGO_API_URL) {
+    console.log(`DJANGO_API_URL value: ${process.env.DJANGO_API_URL}`);
+}
+
 if (missingEnv.length > 0) {
     console.error('CRITICAL ERROR: Missing required environment variables:', missingEnv.join(', '));
     console.error('Please ensure they are defined in your .env file or environment.');

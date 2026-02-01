@@ -18,8 +18,17 @@ const auth = (req, res, next) => {
     }
 };
 
-let djangoUrl = process.env.DJANGO_API_URL || 'http://localhost:8000';
-// Remove trailing slash if present
+let djangoUrl = process.env.DJANGO_API_URL;
+
+// On Render, if the variable is missing, try the standard internal hostname
+if (!djangoUrl && process.env.RENDER) {
+    console.log('[Proxy] DJANGO_API_URL missing on Render, using internal fallback: http://expense-django:10000');
+    djangoUrl = 'http://expense-django:10000';
+} else if (!djangoUrl) {
+    djangoUrl = 'http://127.0.0.1:8000';
+}
+
+// Clean up the URL
 djangoUrl = djangoUrl.replace(/\/$/, '');
 if (!djangoUrl.startsWith('http')) {
     djangoUrl = `http://${djangoUrl}`;
@@ -68,7 +77,7 @@ router.use('/', auth, async (req, res) => {
             res.status(503).json({
                 msg: 'Django server connection failed',
                 error: err.message,
-                detail: `Attempted to connect to ${DJANGO_URL}`
+                detail: `Attempted to connect to ${DJANGO_URL}. Underlying error: ${err.message}`
             });
         } else {
             // Something happened in setting up the request that triggered an Error
