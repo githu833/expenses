@@ -23,7 +23,7 @@ services:
     name: expense-node
     runtime: node
     rootDir: node-backend
-    buildCommand: "npm install"
+    buildCommand: "npm install --legacy-peer-deps"
     startCommand: "node server.js"
     envVars:
       - key: MONGO_URI
@@ -42,7 +42,7 @@ services:
   - type: static
     name: expense-frontend
     rootDir: client
-    buildCommand: "npm install && npm run build"
+    buildCommand: "npm install --legacy-peer-deps && npm run build"
     publishPath: "dist"
     routes:
       - type: rewrite
