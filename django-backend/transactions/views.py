@@ -112,3 +112,30 @@ def get_summary(req):
     summary['balance'] = last_transaction.get('balance_after', 0) if last_transaction else 0
     
     return Response(summary)
+
+@api_view(['GET'])
+def get_status(req):
+    import os
+    from django.conf import settings
+    
+    mongo_uri = os.environ.get('MONGO_URI', 'NOT SET')
+    status_code = 200
+    db_status = "Unknown"
+    
+    try:
+        from pymongo import MongoClient
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=2000)
+        client.admin.command('ping')
+        db_status = "Connected"
+    except Exception as e:
+        db_status = f"Failed: {str(e)}"
+        status_code = 500
+        
+    return Response({
+        "status": "Alive",
+        "mongo_uri_present": mongo_uri != 'NOT SET',
+        "mongo_uri_obfuscated": mongo_uri[:15] + "..." if len(mongo_uri) > 15 else mongo_uri,
+        "database_connectivity": db_status,
+        "django_debug": settings.DEBUG,
+        "details": "This endpoint helps debug Render connectivity issues."
+    }, status=status_code)
