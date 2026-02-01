@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { transactionAPI } from '../api';
-import { PlusCircle, MinusCircle, DollarSign, TextQuote, Save } from 'lucide-react';
+import { PlusCircle, MinusCircle, IndianRupee, TextQuote, Save } from 'lucide-react';
 
 const AddEntry = () => {
     const [type, setType] = useState('credit');

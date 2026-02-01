@@ -18,8 +18,18 @@ router.post('/register', async (req, res) => {
         await user.save();
 
         const payload = { user: { id: user.id, email: user.email } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-            if (err) throw err;
+
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error('CRITICAL: JWT_SECRET is missing from environment variables');
+            return res.status(500).json({ msg: 'Server configuration error: JWT_SECRET missing' });
+        }
+
+        jwt.sign(payload, secret, { expiresIn: '1h' }, (err, token) => {
+            if (err) {
+                console.error('JWT Signing Error (Register):', err.message);
+                return res.status(500).json({ msg: 'Error generating authentication token', error: err.message });
+            }
             res.json({ token });
         });
     } catch (err) {
@@ -39,8 +49,18 @@ router.post('/login', async (req, res) => {
         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
 
         const payload = { user: { id: user.id, email: user.email } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-            if (err) throw err;
+
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error('CRITICAL: JWT_SECRET is missing from environment variables');
+            return res.status(500).json({ msg: 'Server configuration error: JWT_SECRET missing' });
+        }
+
+        jwt.sign(payload, secret, { expiresIn: '1h' }, (err, token) => {
+            if (err) {
+                console.error('JWT Signing Error (Login):', err.message);
+                return res.status(500).json({ msg: 'Error generating authentication token', error: err.message });
+            }
             res.json({ token });
         });
     } catch (err) {

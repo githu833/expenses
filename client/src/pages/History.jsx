@@ -60,10 +60,10 @@ const History = () => {
                                     </span>
                                 </td>
                                 <td style={{ padding: '1.25rem', fontWeight: '600', color: t.type === 'credit' ? 'var(--success)' : 'var(--danger)' }}>
-                                    {t.type === 'credit' ? '+' : '-'}${t.amount.toFixed(2)}
+                                    {t.type === 'credit' ? '+' : '-'}₹{t.amount.toFixed(2)}
                                 </td>
                                 <td style={{ padding: '1.25rem', fontWeight: 'bold' }}>
-                                    ${t.balance_after.toFixed(2)}
+                                    ₹{t.balance_after.toFixed(2)}
                                 </td>
                                 <td style={{ padding: '1.25rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

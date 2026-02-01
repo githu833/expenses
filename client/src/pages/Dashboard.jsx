@@ -39,7 +39,7 @@ const Dashboard = () => {
                         </div>
                         <div>
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{card.title}</p>
-                            <h2 style={{ fontSize: '1.75rem' }}>${card.value.toFixed(2)}</h2>
+                            <h2 style={{ fontSize: '1.75rem' }}>₹{card.value.toFixed(2)}</h2>
                         </div>
                     </div>
                 ))}

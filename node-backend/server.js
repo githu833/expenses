@@ -1,4 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+// Explicitly load .env from the current directory
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -21,12 +24,23 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Env Verification
+// Env Verification & Validation
 console.log('--- STARTING UP (ENV VERIFICATION) ---');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('PORT:', process.env.PORT);
+const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
+const missingEnv = requiredEnv.filter(env => !process.env[env]);
+
+if (missingEnv.length > 0) {
+    console.error('CRITICAL ERROR: Missing required environment variables:', missingEnv.join(', '));
+    console.error('Please ensure they are defined in your .env file or environment.');
+    process.exit(1);
+}
+
+console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+console.log('PORT:', process.env.PORT || 5000);
 console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
+console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
 console.log('--------------------------------------');
+
 
 let lastMongoError = null;
 
