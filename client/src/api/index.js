@@ -9,7 +9,6 @@ const getBaseURL = () => {
 const api = axios.create({
     baseURL: getBaseURL(),
 });
-stone
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
