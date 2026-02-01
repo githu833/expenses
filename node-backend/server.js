@@ -28,11 +28,14 @@ console.log('PORT:', process.env.PORT);
 console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
 console.log('--------------------------------------');
 
+let lastMongoError = null;
+
 // Root Route & Health Check
 app.get('/', (req, res) => {
     res.status(200).json({
         message: 'Expense Tracker API Gateway is online',
-        mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'connecting'
+        mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'connecting',
+        mongoError: lastMongoError
     });
 });
 
@@ -44,14 +47,19 @@ app.get('/health', (req, res) => {
 const mongoURI = process.env.MONGO_URI;
 if (!mongoURI) {
     console.error('CRITICAL: MONGO_URI is not defined.');
+    lastMongoError = "MONGO_URI is missing from environment variables";
 } else {
     mongoose.connect(mongoURI, {
         serverSelectionTimeoutMS: 5000, // 5 seconds
         socketTimeoutMS: 45000,       // 45 seconds
     })
-        .then(() => console.log('MongoDB: Connected successfully'))
+        .then(() => {
+            console.log('MongoDB: Connected successfully');
+            lastMongoError = null;
+        })
         .catch(err => {
             console.error('MongoDB: Connection failed:', err.message);
+            lastMongoError = err.message;
         });
 }
 
