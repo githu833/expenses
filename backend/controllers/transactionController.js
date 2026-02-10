@@ -10,7 +10,7 @@ const getTransactions = async (req, res) => {
 };
 
 const addTransaction = async (req, res) => {
-    const { type, amount, category, date, purpose, source } = req.body;
+    const { type, amount, category, date, purpose, source, sourceId } = req.body;
 
     try {
         const transaction = await Transaction.create({
@@ -20,7 +20,8 @@ const addTransaction = async (req, res) => {
             category,
             date,
             purpose,
-            source
+            source,
+            sourceId
         });
 
         res.status(201).json(transaction);

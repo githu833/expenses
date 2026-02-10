@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { PlusCircle, ArrowUpCircle, ArrowDownCircle, Trash2, LogOut, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const [transactions, setTransactions] = useState([]);
@@ -10,6 +10,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showBreakdown, setShowBreakdown] = useState(false);
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const fetchData = async () => {
         try {
@@ -19,6 +20,9 @@ const Dashboard = () => {
             ]);
             setTransactions(transRes.data);
             setSources(sourcesRes.data);
+            if (sourcesRes.data.length === 0) {
+                navigate('/onboarding');
+            }
         } catch (err) {
             console.error('Error fetching data', err);
         } finally {
@@ -46,8 +50,11 @@ const Dashboard = () => {
         if (curr.type === 'income') acc.income += curr.amount;
         else acc.expense += curr.amount;
 
-        if (!acc.sources[curr.sourceId]) acc.sources[curr.sourceId] = 0;
-        acc.sources[curr.sourceId] += (curr.type === 'income' ? curr.amount : -curr.amount);
+        const sourceKey = curr.sourceId?.toString();
+        if (sourceKey) {
+            if (!acc.sources[sourceKey]) acc.sources[sourceKey] = 0;
+            acc.sources[sourceKey] += (curr.type === 'income' ? curr.amount : -curr.amount);
+        }
 
         return acc;
     }, { income: 0, expense: 0, sources: {} });
@@ -66,15 +73,15 @@ const Dashboard = () => {
                             <X size={24} />
                         </button>
                         <h2 className="mb-4" style={{ fontSize: '1.5rem', textAlign: 'center' }}>Account Balances</h2>
-                        <div className="flex flex-col gap-4 mt-4">
+                        <div className="flex flex-col gap-4 mt-4 p-4">
                             {sources.length === 0 ? (
                                 <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>No sources found.</p>
                             ) : (
                                 sources.map(s => (
                                     <div key={s._id} className="flex justify-between items-center" style={{ padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
                                         <span style={{ fontSize: '1.1rem' }}>{s.name}</span>
-                                        <span style={{ fontWeight: '700', fontSize: '1.2rem', color: (totals.sources[s._id] || 0) >= 0 ? 'var(--income)' : 'var(--expense)' }}>
-                                            ₹{(totals.sources[s._id] || 0).toLocaleString()}
+                                        <span style={{ fontWeight: '700', fontSize: '1.2rem', color: (totals.sources[s._id.toString()] || 0) >= 0 ? 'var(--income)' : 'var(--expense)' }}>
+                                            ₹{(totals.sources[s._id.toString()] || 0).toLocaleString()}
                                         </span>
                                     </div>
                                 ))
@@ -102,6 +109,7 @@ const Dashboard = () => {
                             gap: '8px',
                             marginTop: '4px'
                         }}
+                        title="Click to see breakdown"
                     >
                         <p style={{ color: 'var(--text-secondary)' }}>Total Balance:</p>
                         <h2 style={{ fontSize: '1.4rem', color: 'var(--balance)' }}>₹{balance.toLocaleString()}</h2>
@@ -149,37 +157,39 @@ const Dashboard = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                {transactions.length === 0 ? (
+                {transactions.filter(t => t.source !== 'Initial Balance').length === 0 ? (
                     <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '20px' }}>No transactions found. Add some!</p>
                 ) : (
-                    transactions.map(t => (
-                        <div key={t._id} className="glass-card flex justify-between items-center" style={{ padding: '16px 24px' }}>
-                            <div className="flex items-center gap-4">
-                                {t.type === 'income' ?
-                                    <ArrowUpCircle color="var(--income)" size={32} /> :
-                                    <ArrowDownCircle color="var(--expense)" size={32} />
-                                }
-                                <div>
-                                    <h4 style={{ fontWeight: '600' }}>{t.type === 'income' ? t.source : t.purpose}</h4>
-                                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                        {sources.find(s => s._id === t.sourceId)?.name || 'Unknown Source'} • {t.category ? `${t.category} • ` : ''}{new Date(t.date).toLocaleDateString()}
-                                    </p>
+                    transactions
+                        .filter(t => t.source !== 'Initial Balance')
+                        .map(t => (
+                            <div key={t._id} className="glass-card flex justify-between items-center" style={{ padding: '16px 24px' }}>
+                                <div className="flex items-center gap-4">
+                                    {t.type === 'income' ?
+                                        <ArrowUpCircle color="var(--income)" size={32} /> :
+                                        <ArrowDownCircle color="var(--expense)" size={32} />
+                                    }
+                                    <div>
+                                        <h4 style={{ fontWeight: '600' }}>{t.type === 'income' ? (t.source || 'Income') : (t.purpose || 'Expense')}</h4>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                            {sources.find(s => s._id.toString() === t.sourceId?.toString())?.name || 'Unknown Source'} • {t.category ? `${t.category} • ` : ''}{new Date(t.date).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <span style={{
+                                        fontWeight: '700',
+                                        fontSize: '1.1rem',
+                                        color: t.type === 'income' ? 'var(--income)' : 'var(--expense)'
+                                    }}>
+                                        {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString()}
+                                    </span>
+                                    <button onClick={() => handleDelete(t._id)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
+                                        <Trash2 size={18} />
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <span style={{
-                                    fontWeight: '700',
-                                    fontSize: '1.1rem',
-                                    color: t.type === 'income' ? 'var(--income)' : 'var(--expense)'
-                                }}>
-                                    {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString()}
-                                </span>
-                                <button onClick={() => handleDelete(t._id)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                        ))
                 )}
             </div>
         </div>

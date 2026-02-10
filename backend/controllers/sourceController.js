@@ -11,7 +11,7 @@ const getSources = async (req, res) => {
 };
 
 const addSource = async (req, res) => {
-    const { name } = req.body;
+    const { name, initialBalance } = req.body;
 
     try {
         const sourceExists = await Source.findOne({ userId: req.user._id, name });
@@ -23,6 +23,20 @@ const addSource = async (req, res) => {
             userId: req.user._id,
             name
         });
+
+        // Create initial balance transaction if initialBalance > 0
+        if (initialBalance > 0) {
+            await Transaction.create({
+                userId: req.user._id,
+                type: 'income',
+                amount: initialBalance,
+                sourceId: source._id,
+                source: 'Initial Balance',
+                category: 'Other',
+                date: new Date(),
+                purpose: 'Initial Balance Setup'
+            });
+        }
 
         res.status(201).json(source);
     } catch (error) {
@@ -55,8 +69,42 @@ const deleteSource = async (req, res) => {
     }
 };
 
+const completeOnboarding = async (req, res) => {
+    const { sources } = req.body; // Expecting [{ name: string, balance: number }]
+
+    try {
+        const createdSources = [];
+        for (const s of sources) {
+            // Create the source
+            const source = await Source.create({
+                userId: req.user._id,
+                name: s.name
+            });
+            createdSources.push(source);
+
+            // Create initial balance transaction if balance > 0
+            if (s.balance > 0) {
+                await Transaction.create({
+                    userId: req.user._id,
+                    type: 'income',
+                    amount: s.balance,
+                    sourceId: source._id,
+                    source: 'Initial Balance',
+                    category: 'Other',
+                    date: new Date(),
+                    purpose: 'Initial Balance Setup'
+                });
+            }
+        }
+        res.status(201).json(createdSources);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getSources,
     addSource,
-    deleteSource
+    deleteSource,
+    completeOnboarding
 };

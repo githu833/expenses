@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const Sources = () => {
     const [sources, setSources] = useState([]);
     const [newName, setNewName] = useState('');
+    const [initialBalance, setInitialBalance] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -30,9 +31,13 @@ const Sources = () => {
         if (!newName.trim()) return;
         setError('');
         try {
-            const { data } = await api.post('/sources', { name: newName });
+            const { data } = await api.post('/sources', {
+                name: newName,
+                initialBalance: Number(initialBalance) || 0
+            });
             setSources([...sources, data]);
             setNewName('');
+            setInitialBalance('');
         } catch (err) {
             setError(err.response?.data?.message || 'Error adding source');
         }
@@ -63,19 +68,29 @@ const Sources = () => {
                     <h2 style={{ fontSize: '1.5rem' }}>Manage Sources</h2>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-                    Add accounts like "Bank Account", "Cash", or "Credit Card" to track where your money is stored.
+                    Add accounts and their starting balances to track where your money is stored.
                 </p>
 
-                <form onSubmit={handleAdd} className="flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="e.g. Bank Account"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        required
-                    />
-                    <button type="submit" className="btn-primary flex items-center gap-2" style={{ whiteSpace: 'nowrap' }}>
-                        <Plus size={20} /> Add
+                <form onSubmit={handleAdd} className="flex flex-col gap-3">
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            placeholder="Account Name (e.g. Bank)"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            required
+                            style={{ flex: 2 }}
+                        />
+                        <input
+                            type="number"
+                            placeholder="Initial Balance (₹)"
+                            value={initialBalance}
+                            onChange={(e) => setInitialBalance(e.target.value)}
+                            style={{ flex: 1 }}
+                        />
+                    </div>
+                    <button type="submit" className="btn-primary flex items-center justify-center gap-2">
+                        <Plus size={20} /> Add Source
                     </button>
                 </form>
                 {error && <p style={{ color: 'var(--expense)', marginTop: '10px', fontSize: '0.9rem' }}>{error}</p>}

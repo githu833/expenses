@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Basic Route
 app.get('/', (req, res) => {
-    res.send('Expense Tracker API is running');
+    res.json({ status: 'success', message: 'Expense Tracker API is running' });
 });
 
 // Routes

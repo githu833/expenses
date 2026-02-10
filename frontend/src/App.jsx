@@ -5,6 +5,7 @@ import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import AddEntry from './pages/Transactions';
 import Sources from './pages/Sources';
+import Onboarding from './pages/Onboarding';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -40,6 +41,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Sources />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/onboarding"
+              element={
+                <PrivateRoute>
+                  <Onboarding />
                 </PrivateRoute>
               }
             />
