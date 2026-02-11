@@ -23,16 +23,18 @@ const Footer = () => {
             zIndex: 1000,
             paddingBottom: '20px' // Extra padding for mobile bottom bar
         }}>
-            <Link to="/dashboard" style={{
-                color: isActive('/dashboard') ? 'var(--primary)' : 'var(--text-secondary)',
+            <Link to="/" style={{
+                color: (isActive('/') || isActive('/dashboard')) ? 'var(--primary)' : 'var(--text-secondary)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 textDecoration: 'none',
-                gap: '4px'
+                gap: '4px',
+                padding: '8px 16px', // Larger touch target
+                flex: 1
             }}>
                 <Home size={24} />
-                <span style={{ fontSize: '0.75rem' }}>Home</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: (isActive('/') || isActive('/dashboard')) ? '600' : '400' }}>Home</span>
             </Link>
 
             <Link to="/history" style={{
@@ -41,10 +43,12 @@ const Footer = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 textDecoration: 'none',
-                gap: '4px'
+                gap: '4px',
+                padding: '8px 16px', // Larger touch target
+                flex: 1
             }}>
                 <HistoryIcon size={24} />
-                <span style={{ fontSize: '0.75rem' }}>History</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: isActive('/history') ? '600' : '400' }}>History</span>
             </Link>
         </footer>
     );

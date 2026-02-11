@@ -23,13 +23,17 @@ function App() {
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route
-              path="/dashboard"
+              path="/"
               element={
                 <PrivateRoute>
                   <Dashboard />
                   <Footer />
                 </PrivateRoute>
               }
+            />
+            <Route
+              path="/dashboard"
+              element={<Navigate to="/" />}
             />
             <Route
               path="/add"
@@ -66,7 +70,7 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+
           </Routes>
         </div>
       </Router>
