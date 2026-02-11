@@ -8,6 +8,8 @@ const Dashboard = () => {
     const [transactions, setTransactions] = useState([]);
     const [sources, setSources] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [isSyncing, setIsSyncing] = useState(false);
     const [showBreakdown, setShowBreakdown] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -20,7 +22,13 @@ const Dashboard = () => {
             ]);
             setTransactions(transRes.data);
             setSources(sourcesRes.data);
-            if (sourcesRes.data.length === 0) {
+
+            // If data is from cache, it will have .offline property
+            if (transRes.offline || sourcesRes.offline) {
+                console.log('Viewing offline data');
+            }
+
+            if (sourcesRes.data.length === 0 && !sourcesRes.offline) {
                 navigate('/onboarding');
             }
         } catch (err) {
@@ -32,7 +40,26 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchData();
+
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+        const handleSyncStart = () => setIsSyncing(true);
+        const handleSyncComplete = () => {
+            setIsSyncing(false);
+            fetchData(); // Reload data after sync
+        };
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        window.addEventListener('sync-complete', handleSyncComplete);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('sync-complete', handleSyncComplete);
+        };
     }, []);
+
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this transaction?')) {
@@ -94,6 +121,18 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Offline / Sync Banners */}
+            {!isOnline && (
+                <div style={{ background: 'var(--expense)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
+                    You are offline. Changes will be saved locally.
+                </div>
+            )}
+            {isSyncing && (
+                <div style={{ background: 'var(--primary)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
+                    Syncing data with server...
                 </div>
             )}
 

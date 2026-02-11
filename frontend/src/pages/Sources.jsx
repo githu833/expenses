@@ -25,7 +25,12 @@ const Sources = () => {
             setEditingId(null);
             setEditName('');
         } catch (err) {
-            setError(err.response?.data?.message || 'Error updating source');
+            if (err.offline) {
+                alert(err.message);
+                setEditingId(null);
+            } else {
+                setError(err.response?.data?.message || 'Error updating source');
+            }
         }
     };
 
@@ -59,7 +64,13 @@ const Sources = () => {
             setNewName('');
             setInitialBalance('');
         } catch (err) {
-            setError(err.response?.data?.message || 'Error adding source');
+            if (err.offline) {
+                alert(err.message);
+                setNewName('');
+                setInitialBalance('');
+            } else {
+                setError(err.response?.data?.message || 'Error adding source');
+            }
         }
     };
 
@@ -69,7 +80,11 @@ const Sources = () => {
                 await api.delete(`/sources/${id}`);
                 setSources(sources.filter(s => s._id !== id));
             } catch (err) {
-                alert(err.response?.data?.message || 'Failed to delete source');
+                if (err.offline) {
+                    alert(err.message);
+                } else {
+                    alert(err.response?.data?.message || 'Failed to delete source');
+                }
             }
         }
     };

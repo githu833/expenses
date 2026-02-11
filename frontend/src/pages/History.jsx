@@ -35,7 +35,11 @@ const History = () => {
                 await api.delete(`/transactions/${id}`);
                 setTransactions(transactions.filter(t => t._id !== id));
             } catch (err) {
-                alert('Failed to delete transaction');
+                if (err.offline) {
+                    alert(err.message);
+                } else {
+                    alert('Failed to delete transaction');
+                }
             }
         }
     };

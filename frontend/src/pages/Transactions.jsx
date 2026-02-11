@@ -69,7 +69,12 @@ const AddEntry = () => {
             }
             navigate('/history'); // return to history after edit
         } catch (err) {
-            alert(err.response?.data?.message || 'Error saving transaction');
+            if (err.offline) {
+                alert(err.message);
+                navigate('/history');
+            } else {
+                alert(err.response?.data?.message || 'Error saving transaction');
+            }
         } finally {
             setLoading(false);
         }
