@@ -143,15 +143,7 @@ const AddEntry = () => {
                         </div>
                     )}
 
-                    {formData.type === 'income' && (
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px' }}>Category</label>
-                            <select name="category" value={formData.category} onChange={handleChange} required>
-                                <option value="">Select Category</option>
-                                {categories[formData.type].map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                    )}
+
 
                     <div>
                         <label style={{ display: 'block', marginBottom: '8px' }}>Date</label>

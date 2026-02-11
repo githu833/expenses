@@ -33,7 +33,6 @@ const transactionSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: function () { return this.type === 'income'; },
         trim: true
     },
     date: {
