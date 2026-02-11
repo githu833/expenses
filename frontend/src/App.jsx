@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import AddEntry from './pages/Transactions';
+import Sources from './pages/Sources';
+import Onboarding from './pages/Onboarding';
 import History from './pages/History';
 import Footer from './components/Footer';
 
