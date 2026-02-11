@@ -1,5 +1,4 @@
-// Basic Service Worker for PWA stability
-const CACHE_NAME = 'expense-tracker-v1';
+const CACHE_NAME = 'expense-tracker-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
