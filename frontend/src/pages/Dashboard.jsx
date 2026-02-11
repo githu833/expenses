@@ -147,51 +147,18 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="flex justify-between items-center mb-4">
+            {/* <div className="flex justify-between items-center mb-4">
                 <h3 style={{ fontSize: '1.4rem' }}>Recent Transactions</h3>
                 <Link to="/add">
                     <button className="btn-primary flex items-center gap-2">
                         <PlusCircle size={20} /> Add Entry
                     </button>
                 </Link>
-            </div>
+            </div> */}
 
-            <div className="flex flex-col gap-4">
-                {transactions.filter(t => t.source !== 'Initial Balance').length === 0 ? (
-                    <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '20px' }}>No transactions found. Add some!</p>
-                ) : (
-                    transactions
-                        .filter(t => t.source !== 'Initial Balance')
-                        .map(t => (
-                            <div key={t._id} className="glass-card flex justify-between items-center" style={{ padding: '16px 24px' }}>
-                                <div className="flex items-center gap-4">
-                                    {t.type === 'income' ?
-                                        <ArrowUpCircle color="var(--income)" size={32} /> :
-                                        <ArrowDownCircle color="var(--expense)" size={32} />
-                                    }
-                                    <div>
-                                        <h4 style={{ fontWeight: '600' }}>{t.type === 'income' ? (t.source || 'Income') : (t.purpose || 'Expense')}</h4>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                            {sources.find(s => s._id.toString() === t.sourceId?.toString())?.name || 'Unknown Source'} • {t.category ? `${t.category} • ` : ''}{new Date(t.date).toLocaleDateString()}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span style={{
-                                        fontWeight: '700',
-                                        fontSize: '1.1rem',
-                                        color: t.type === 'income' ? 'var(--income)' : 'var(--expense)'
-                                    }}>
-                                        {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString()}
-                                    </span>
-                                    <button onClick={() => handleDelete(t._id)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                )}
-            </div>
+            {/* Start adding bottom padding for footer visibility */}
+            <div style={{ paddingBottom: '80px' }}></div>
+
         </div>
     );
 };

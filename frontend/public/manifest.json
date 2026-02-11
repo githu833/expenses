@@ -1,0 +1,16 @@
+{
+    "name": "Expense Tracker",
+    "short_name": "Expenses",
+    "description": "Premium Expense Tracker Application",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "vite.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

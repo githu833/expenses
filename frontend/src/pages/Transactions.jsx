@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import { ArrowLeft, Save } from 'lucide-react';
 
 const AddEntry = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const editingTransaction = location.state?.transaction;
+
     const [formData, setFormData] = useState({
         type: 'expense',
         amount: '',
@@ -16,14 +19,24 @@ const AddEntry = () => {
     const [sources, setSources] = useState([]);
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSources = async () => {
             try {
                 const { data } = await api.get('/sources');
                 setSources(data);
-                if (data.length > 0) {
+
+                if (editingTransaction) {
+                    setFormData({
+                        type: editingTransaction.type,
+                        amount: editingTransaction.amount,
+                        sourceId: editingTransaction.sourceId,
+                        date: new Date(editingTransaction.date).toISOString().split('T')[0],
+                        purpose: editingTransaction.purpose || '',
+                        source: editingTransaction.source || '',
+                        category: editingTransaction.category || ''
+                    });
+                } else if (data.length > 0) {
                     setFormData(prev => ({ ...prev, sourceId: data[0]._id }));
                 }
             } catch (err) {
@@ -33,7 +46,7 @@ const AddEntry = () => {
             }
         };
         fetchSources();
-    }, []);
+    }, [editingTransaction]);
 
     const categories = {
         income: ['Salary', 'Freelance', 'Gift', 'Investment', 'Other'],
@@ -48,8 +61,12 @@ const AddEntry = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await api.post('/transactions', formData);
-            navigate('/dashboard');
+            if (editingTransaction) {
+                await api.put(`/transactions/${editingTransaction._id}`, formData);
+            } else {
+                await api.post('/transactions', formData);
+            }
+            navigate('/history'); // return to history after edit
         } catch (err) {
             alert(err.response?.data?.message || 'Error saving transaction');
         } finally {
@@ -58,15 +75,17 @@ const AddEntry = () => {
     };
 
     return (
-        <div className="container" style={{ maxWidth: '600px' }}>
+        <div className="container" style={{ maxWidth: '600px', paddingBottom: '80px' }}>
             <button onClick={() => navigate(-1)} className="flex items-center gap-2 mb-4" style={{ background: 'transparent', color: 'var(--text-secondary)' }}>
                 <ArrowLeft size={20} /> Back
             </button>
 
             <div className="glass-card">
-                <h2 className="mb-4" style={{ fontSize: '1.5rem' }}>Add New Entry</h2>
+                <h2 className="mb-4" style={{ fontSize: '1.5rem' }}>{editingTransaction ? 'Edit Transaction' : 'Add New Entry'}</h2>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    {/* ... (rest of form) ... */}
+                    {/* I need to keep the form content intact, let's just target the header and button independently or broadly */}
                     <div className="flex gap-4">
                         <button
                             type="button"
@@ -139,7 +158,7 @@ const AddEntry = () => {
                     </div>
 
                     <button type="submit" disabled={loading} className="btn-primary mt-4 flex items-center justify-center gap-2">
-                        <Save size={20} /> {loading ? 'Saving...' : 'Save Transaction'}
+                        <Save size={20} /> {loading ? 'Saving...' : (editingTransaction ? 'Update Transaction' : 'Save Transaction')}
                     </button>
                 </form>
             </div>

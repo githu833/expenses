@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Plus, Trash2, ArrowLeft, Wallet } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft, Wallet, Edit2, Save, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Sources = () => {
@@ -9,6 +9,26 @@ const Sources = () => {
     const [initialBalance, setInitialBalance] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [editingId, setEditingId] = useState(null);
+    const [editName, setEditName] = useState('');
+
+    const handleEditClick = (source) => {
+        setEditingId(source._id);
+        setEditName(source.name);
+    };
+
+    const handleUpdate = async (id) => {
+        if (!editName.trim()) return;
+        try {
+            const { data } = await api.put(`/sources/${id}`, { name: editName });
+            setSources(sources.map(s => s._id === id ? data : s));
+            setEditingId(null);
+            setEditName('');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error updating source');
+        }
+    };
+
     const navigate = useNavigate();
 
     const fetchSources = async () => {
@@ -57,7 +77,7 @@ const Sources = () => {
     if (loading) return <div className="container">Loading...</div>;
 
     return (
-        <div className="container" style={{ maxWidth: '600px' }}>
+        <div className="container" style={{ maxWidth: '600px', paddingBottom: '80px' }}>
             <button onClick={() => navigate(-1)} className="flex items-center gap-2 mb-4" style={{ background: 'transparent', color: 'var(--text-secondary)' }}>
                 <ArrowLeft size={20} /> Back
             </button>
@@ -102,10 +122,34 @@ const Sources = () => {
                 ) : (
                     sources.map(s => (
                         <div key={s._id} className="glass-card flex justify-between items-center" style={{ padding: '12px 20px' }}>
-                            <span style={{ fontWeight: '500' }}>{s.name}</span>
-                            <button onClick={() => handleDelete(s._id)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
-                                <Trash2 size={18} />
-                            </button>
+                            {editingId === s._id ? (
+                                <div className="flex items-center gap-2" style={{ flex: 1 }}>
+                                    <input
+                                        type="text"
+                                        value={editName}
+                                        onChange={(e) => setEditName(e.target.value)}
+                                        style={{ padding: '8px', width: '100%' }}
+                                    />
+                                    <button onClick={() => handleUpdate(s._id)} style={{ color: 'var(--income)', background: 'transparent' }}>
+                                        <Save size={18} />
+                                    </button>
+                                    <button onClick={() => setEditingId(null)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <span style={{ fontWeight: '500' }}>{s.name}</span>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => handleEditClick(s)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
+                                            <Edit2 size={18} />
+                                        </button>
+                                        <button onClick={() => handleDelete(s._id)} style={{ color: 'var(--text-secondary)', background: 'transparent' }}>
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     ))
                 )}

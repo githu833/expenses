@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getSources, addSource, deleteSource, completeOnboarding } = require('../controllers/sourceController');
+const { getSources, addSource, updateSource, deleteSource, completeOnboarding } = require('../controllers/sourceController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -11,6 +11,7 @@ router.route('/onboarding')
     .post(protect, completeOnboarding);
 
 router.route('/:id')
+    .put(protect, updateSource)
     .delete(protect, deleteSource);
 
 module.exports = router;
