@@ -35,18 +35,6 @@ const Footer = () => {
                 <span style={{ fontSize: '0.75rem' }}>Home</span>
             </Link>
 
-            <Link to="/add" style={{
-                color: isActive('/add') ? 'var(--primary)' : 'var(--text-secondary)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textDecoration: 'none',
-                gap: '4px'
-            }}>
-                <PlusCircle size={32} color={isActive('/add') ? 'var(--primary)' : 'var(--text-secondary)'} />
-                {/* <span style={{ fontSize: '0.75rem' }}>Add</span> */}
-            </Link>
-
             <Link to="/history" style={{
                 color: isActive('/history') ? 'var(--primary)' : 'var(--text-secondary)',
                 display: 'flex',
@@ -57,17 +45,6 @@ const Footer = () => {
             }}>
                 <HistoryIcon size={24} />
                 <span style={{ fontSize: '0.75rem' }}>History</span>
-            </Link>
-            <Link to="/sources" style={{
-                color: isActive('/sources') ? 'var(--primary)' : 'var(--text-secondary)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textDecoration: 'none',
-                gap: '4px'
-            }}>
-                <Wallet size={24} />
-                <span style={{ fontSize: '0.75rem' }}>Sources</span>
             </Link>
         </footer>
     );

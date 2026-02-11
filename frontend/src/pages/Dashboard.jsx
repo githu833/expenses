@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
-import { PlusCircle, ArrowUpCircle, ArrowDownCircle, Trash2, LogOut, X } from 'lucide-react';
+import { PlusCircle, ArrowUpCircle, ArrowDownCircle, Trash2, LogOut, X, Wallet } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -147,17 +147,38 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* <div className="flex justify-between items-center mb-4">
-                <h3 style={{ fontSize: '1.4rem' }}>Recent Transactions</h3>
+            <div className="flex justify-between items-center mb-4">
+                <h3 style={{ fontSize: '1.4rem' }}>Quick Actions</h3>
                 <Link to="/add">
                     <button className="btn-primary flex items-center gap-2">
                         <PlusCircle size={20} /> Add Entry
                     </button>
                 </Link>
-            </div> */}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
+                <Link to="/add" style={{ textDecoration: 'none' }}>
+                    <div className="glass-card flex items-center gap-4" style={{ padding: '20px' }}>
+                        <PlusCircle color="var(--primary)" size={32} />
+                        <div>
+                            <h4 style={{ color: 'var(--text-primary)' }}>New Transaction</h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Record a new income or expense</p>
+                        </div>
+                    </div>
+                </Link>
+                <Link to="/sources" style={{ textDecoration: 'none' }}>
+                    <div className="glass-card flex items-center gap-4" style={{ padding: '20px' }}>
+                        <Wallet size={32} color="var(--primary)" />
+                        <div>
+                            <h4 style={{ color: 'var(--text-primary)' }}>Manage Sources</h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Add or edit your payment methods</p>
+                        </div>
+                    </div>
+                </Link>
+            </div>
 
             {/* Start adding bottom padding for footer visibility */}
-            <div style={{ paddingBottom: '80px' }}></div>
+            <div style={{ paddingBottom: '100px' }}></div>
 
         </div>
     );
