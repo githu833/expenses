@@ -19,7 +19,7 @@ const Auth = () => {
             const endpoint = isLogin ? '/auth/login' : '/auth/signup';
             const { data } = await api.post(endpoint, { email, password });
             login(data);
-            navigate(isLogin ? '/dashboard' : '/onboarding');
+            navigate(isLogin ? '/' : '/onboarding');
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong');
         }

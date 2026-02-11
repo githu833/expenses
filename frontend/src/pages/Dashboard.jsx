@@ -99,7 +99,7 @@ const Dashboard = () => {
 
             <header className="flex justify-between items-center mb-4">
                 <div>
-                    <h1 style={{ fontSize: '1.8rem' }}>Welcome, {user?.email.split('@')[0]}</h1>
+                    <h1 style={{ fontSize: '1.8rem' }}>Welcome, {user?.email?.split('@')[0] || 'User'}</h1>
                     <div
                         onClick={() => setShowBreakdown(true)}
                         style={{
