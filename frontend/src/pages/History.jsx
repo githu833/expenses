@@ -54,10 +54,12 @@ const History = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                {transactions.length === 0 ? (
-                    <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '20px' }}>No transactions found.</p>
-                ) : (
-                    transactions.map(t => (
+                {(() => {
+                    const displayTransactions = transactions.filter(t => t.purpose !== 'Initial Balance Setup');
+                    if (displayTransactions.length === 0) {
+                        return <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '20px' }}>No transactions found.</p>;
+                    }
+                    return displayTransactions.map(t => (
                         <div key={t._id} className="glass-card flex justify-between items-center" style={{ padding: '16px 24px' }}>
                             <div className="flex items-center gap-4">
                                 {t.type === 'income' ?
@@ -87,8 +89,8 @@ const History = () => {
                                 </button>
                             </div>
                         </div>
-                    ))
-                )}
+                    ));
+                })()}
             </div>
         </div>
     );
