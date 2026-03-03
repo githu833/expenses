@@ -49,7 +49,7 @@ const Auth = () => {
                     <CheckCircle2 size={32} color="white" strokeWidth={2.5} />
                 </div>
                 <h1 style={{ fontSize: '1.75rem', fontWeight: '800', letterSpacing: '-0.5px', marginBottom: '8px' }}>
-                    Antigravity Pay
+                    Expense Tracker
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
                     {isLogin ? "Welcome back! Please login to your account." : "Start tracking your expenses with us today."}
@@ -64,7 +64,7 @@ const Auth = () => {
                 padding: '32px',
                 borderRadius: '28px',
                 border: '1px solid var(--border)',
-                background: 'rgba(21, 26, 45, 0.7)',
+                background: 'var(--bg-card)',
                 backdropFilter: 'blur(20px)'
             }}>
                 <div className="flex items-center gap-3 mb-8" style={{ justifyContent: 'center' }}>
