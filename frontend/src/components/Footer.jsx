@@ -14,8 +14,7 @@ const Footer = () => {
         { path: '/', icon: LayoutDashboard, label: 'Home' },
         { path: '/history', icon: History, label: 'History' },
         { path: '/add', icon: Plus, label: 'Quick Add', isFab: true },
-        { path: '/sources', icon: Wallet, label: 'Sources' },
-        { path: '/transactions', icon: ShoppingBag, label: 'List' } // If exists, otherwise placeholder
+        { path: '/sources', icon: Wallet, label: 'Sources' }
     ];
 
     return (

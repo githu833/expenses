@@ -222,6 +222,23 @@ select:focus {
   height: 24px;
 }
 
+.fab {
+  width: 56px;
+  height: 56px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+  color: white;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
 /* Loader Animation */
 .loader {
   width: 48px;
