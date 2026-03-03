@@ -9,12 +9,17 @@ import {
     ArrowLeft,
     TrendingUp,
     Wallet,
-    User as UserIcon
+    User as UserIcon,
+    ChevronLeft,
+    ChevronRight,
+    ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Account = () => {
     const [filter, setFilter] = useState('monthly'); // 'daily', 'monthly', 'yearly'
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [displayType, setDisplayType] = useState('all'); // 'all', 'income', 'expense'
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const { user } = useAuth();
@@ -34,19 +39,47 @@ const Account = () => {
         fetchTransactions();
     }, []);
 
+    const navigateDate = (direction) => {
+        const newDate = new Date(currentDate);
+        if (filter === 'daily') {
+            newDate.setDate(newDate.getDate() + direction);
+        } else if (filter === 'monthly') {
+            newDate.setMonth(newDate.getMonth() + direction);
+        } else if (filter === 'yearly') {
+            newDate.setFullYear(newDate.getFullYear() + direction);
+        }
+        setCurrentDate(newDate);
+    };
+
     const filterTransactions = () => {
-        const now = new Date();
         return transactions.filter(t => {
             const tDate = new Date(t.date);
+            let matchesDate = false;
+
             if (filter === 'daily') {
-                return tDate.toDateString() === now.toDateString();
+                matchesDate = tDate.toDateString() === currentDate.toDateString();
             } else if (filter === 'monthly') {
-                return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+                matchesDate = tDate.getMonth() === currentDate.getMonth() && tDate.getFullYear() === currentDate.getFullYear();
             } else if (filter === 'yearly') {
-                return tDate.getFullYear() === now.getFullYear();
+                matchesDate = tDate.getFullYear() === currentDate.getFullYear();
             }
-            return true;
+
+            if (!matchesDate) return false;
+
+            if (displayType === 'income') return t.type === 'income';
+            if (displayType === 'expense') return t.type === 'expense';
+            return true; // 'all'
         });
+    };
+
+    const getDateDisplay = () => {
+        if (filter === 'daily') {
+            return currentDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+        } else if (filter === 'monthly') {
+            return currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+        } else if (filter === 'yearly') {
+            return currentDate.getFullYear().toString();
+        }
     };
 
     const currentTransactions = filterTransactions();
@@ -138,14 +171,17 @@ const Account = () => {
                 padding: '6px',
                 borderRadius: '16px',
                 display: 'flex',
-                marginBottom: '24px',
+                marginBottom: '16px',
                 position: 'relative',
                 border: '1px solid var(--border)'
             }}>
                 {['daily', 'monthly', 'yearly'].map((type) => (
                     <button
                         key={type}
-                        onClick={() => setFilter(type)}
+                        onClick={() => {
+                            setFilter(type);
+                            setCurrentDate(new Date()); // Reset to today when changing filter
+                        }}
                         style={{
                             flex: 1,
                             padding: '12px',
@@ -156,6 +192,53 @@ const Account = () => {
                             background: filter === type ? 'var(--primary)' : 'transparent',
                             color: filter === type ? 'white' : 'var(--text-secondary)',
                             transition: 'all 0.3s ease',
+                            textTransform: 'capitalize'
+                        }}
+                    >
+                        {type}
+                    </button>
+                ))}
+            </div>
+
+            {/* Date Navigation Section */}
+            <div className="flex items-center justify-between mb-6" style={{
+                background: 'var(--glass)',
+                padding: '12px 20px',
+                borderRadius: '16px',
+                border: '1px solid var(--border)'
+            }}>
+                <button
+                    onClick={() => navigateDate(-1)}
+                    style={{ background: 'transparent', color: 'var(--text-primary)' }}
+                >
+                    <ChevronLeft size={24} />
+                </button>
+                <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>{getDateDisplay()}</p>
+                </div>
+                <button
+                    onClick={() => navigateDate(1)}
+                    style={{ background: 'transparent', color: 'var(--text-primary)' }}
+                >
+                    <ChevronRight size={24} />
+                </button>
+            </div>
+
+            {/* Type Selector (All/Income/Expense) */}
+            <div className="flex gap-2 mb-8">
+                {['all', 'income', 'expense'].map((type) => (
+                    <button
+                        key={type}
+                        onClick={() => setDisplayType(type)}
+                        style={{
+                            flex: 1,
+                            padding: '10px',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            background: displayType === type ? 'var(--primary)' : 'var(--glass)',
+                            color: displayType === type ? 'white' : 'var(--text-secondary)',
+                            border: '1px solid var(--border)',
                             textTransform: 'capitalize'
                         }}
                     >
@@ -205,52 +288,63 @@ const Account = () => {
                 </div>
             </div>
 
-            {/* Breakdown Section */}
+            {/* Transactions Section */}
             <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '16px' }}>Expenditure Breakdown</h3>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '16px', textTransform: 'capitalize' }}>
+                    {displayType === 'all' ? 'Transactions' : displayType} Breakdown
+                </h3>
                 <div className="flex flex-col gap-3">
-                    {currentTransactions.filter(t => t.type === 'expense').length === 0 ? (
+                    {currentTransactions.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
                             <Calendar size={40} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-                            <p>No expenses for this period.</p>
+                            <p>No transactions for this period.</p>
                         </div>
                     ) : (
-                        currentTransactions
-                            .filter(t => t.type === 'expense')
-                            .map((t) => (
-                                <div key={t._id} className="glass-card" style={{
-                                    padding: '16px',
-                                    borderRadius: '18px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    background: 'var(--glass)'
-                                }}>
-                                    <div className="flex items-center gap-4">
-                                        <div style={{
-                                            width: '44px',
-                                            height: '44px',
-                                            borderRadius: '12px',
-                                            background: 'rgba(239, 68, 68, 0.05)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
+                        currentTransactions.map((t) => (
+                            <div key={t._id} className="glass-card" style={{
+                                padding: '16px',
+                                borderRadius: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                background: 'var(--glass)'
+                            }}>
+                                <div className="flex items-center gap-4">
+                                    <div style={{
+                                        width: '44px',
+                                        height: '44px',
+                                        borderRadius: '12px',
+                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        {t.type === 'income' ?
+                                            <TrendingUp size={20} color="var(--income)" /> :
                                             <TrendingDown size={20} color="var(--expense)" />
-                                        </div>
-                                        <div>
-                                            <h4 style={{ fontSize: '0.95rem', fontWeight: '600' }}>{t.purpose || 'Expense'}</h4>
-                                            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                                {new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                            </p>
-                                        </div>
+                                        }
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <p style={{ fontWeight: '700', fontSize: '1rem' }}>₹{t.amount.toLocaleString()}</p>
-                                        <ArrowUpRight size={14} color="var(--text-muted)" />
+                                    <div>
+                                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600' }}>
+                                            {t.type === 'income' ? (t.source || 'Income') : (t.purpose || 'Expense')}
+                                        </h4>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                            {new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        </p>
                                     </div>
                                 </div>
-                            ))
+                                <div style={{ textAlign: 'right' }}>
+                                    <p style={{
+                                        fontWeight: '700',
+                                        fontSize: '1rem',
+                                        color: t.type === 'income' ? 'var(--income)' : 'var(--text-primary)'
+                                    }}>
+                                        {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString()}
+                                    </p>
+                                    <ArrowUpRight size={14} color="var(--text-muted)" />
+                                </div>
+                            </div>
+                        ))
                     )}
                 </div>
             </div>
