@@ -4,7 +4,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 function ReloadPrompt() {
     const {
         offlineReady: [offlineReady, setOfflineReady],
-        needUpdate: [needUpdate, setNeedUpdate],
+        needRefresh: [needUpdate, setNeedUpdate],
         updateServiceWorker,
     } = useRegisterSW({
         onRegistered(r) {
