@@ -12,7 +12,8 @@ import {
     ChevronRight,
     Bell,
     Settings,
-    User
+    User,
+    History
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
