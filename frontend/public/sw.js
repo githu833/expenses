@@ -1,12 +1,9 @@
-const CACHE_NAME = 'expense-tracker-offline-v14';
+const CACHE_NAME = 'expense-tracker-v15';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/manifest.json',
-    '/logo.png',
-    '/src/main.jsx',
-    '/src/App.jsx',
-    '/src/index.css'
+    '/logo.png'
 ];
 
 // Install: Cache essential assets
