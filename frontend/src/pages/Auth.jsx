@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
-import { LogIn, UserPlus, Mail, Lock, CheckCircle2, Sun, Moon } from 'lucide-react';
+import { LogIn, UserPlus, Mail, Lock, CheckCircle2, Sun, Moon, Download } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useEffect } from 'react';
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +14,28 @@ const Auth = () => {
     const { login } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+    const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+    useEffect(() => {
+        const handleBeforeInstallPrompt = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            setShowInstallBtn(true);
+        };
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+            setShowInstallBtn(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,6 +59,23 @@ const Auth = () => {
             padding: '24px',
             position: 'relative'
         }}>
+            {/* Top Tools */}
+            <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                {showInstallBtn && (
+                    <button
+                        onClick={handleInstallClick}
+                        style={{ background: 'var(--primary)', color: 'white', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'pulse 2s infinite' }}
+                    >
+                        <Download size={20} />
+                    </button>
+                )}
+                <button
+                    onClick={toggleTheme}
+                    style={{ background: 'var(--glass)', color: 'var(--text-primary)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
+            </div>
             {/* Branding / Logo Area */}
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                 <div style={{
@@ -51,7 +91,7 @@ const Auth = () => {
                     boxShadow: 'var(--shadow-premium)',
                     border: '1px solid var(--border)'
                 }}>
-                    <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', opacity: 0.2 }}></div>
                 </div>
                 <h1 style={{ fontSize: '1.75rem', fontWeight: '800', letterSpacing: '-0.5px', marginBottom: '8px' }}>
                     Expense Tracker

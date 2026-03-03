@@ -15,7 +15,8 @@ import {
     User,
     History,
     Sun,
-    Moon
+    Moon,
+    Download
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -29,6 +30,8 @@ const Dashboard = () => {
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+    const [showInstallBtn, setShowInstallBtn] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -52,13 +55,30 @@ const Dashboard = () => {
         fetchData();
         const handleOnline = () => setIsOnline(true);
         const handleOffline = () => setIsOnline(false);
+        const handleBeforeInstallPrompt = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            setShowInstallBtn(true);
+        };
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
         return () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
         };
     }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+            setShowInstallBtn(false);
+        }
+    };
 
     const totals = transactions.reduce((acc, curr) => {
         if (curr.type === 'income') acc.income += curr.amount;
@@ -96,12 +116,20 @@ const Dashboard = () => {
                     }}>
                         <User size={22} color="white" />
                     </div>
-                    <div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Good morning,</p>
-                        <h1 style={{ fontSize: '1.2rem', fontWeight: '700' }}>{user?.email?.split('@')[0] || 'User'}</h1>
+                    <div style={{ overflow: 'hidden' }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '-2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Welcome back,</p>
+                        <h1 style={{ fontSize: '1.1rem', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email?.split('@')[0] || 'User'}</h1>
                     </div>
                 </div>
                 <div className="flex gap-2">
+                    {showInstallBtn && (
+                        <button
+                            onClick={handleInstallClick}
+                            style={{ background: 'var(--primary)', color: 'white', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'pulse 2s infinite' }}
+                        >
+                            <Download size={20} />
+                        </button>
+                    )}
                     <button
                         onClick={toggleTheme}
                         style={{ background: 'var(--glass)', color: 'var(--text-primary)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'expense-tracker-offline-v10';
+const CACHE_NAME = 'expense-tracker-offline-v14';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -13,7 +13,6 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            // It's okay if some of these fail in dev mode due to vite's dynamic nature
             return cache.addAll(ASSETS_TO_CACHE).catch(err => console.log('Partial cache: ', err));
         })
     );
@@ -40,13 +39,22 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    // Skip API calls for SW cache (handled by api.js logic)
+    // Skip API calls
     if (event.request.url.includes('/api/')) return;
+
+    // Navigation fallback for SPA (crucial for PWA installability)
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                return caches.match('/index.html') || caches.match('/');
+            })
+        );
+        return;
+    }
 
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Only cache successful requests
                 if (!response || response.status !== 200 || response.type !== 'basic') {
                     return response;
                 }
