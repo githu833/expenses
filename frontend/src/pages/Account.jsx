@@ -8,7 +8,8 @@ import {
     Filter,
     ArrowLeft,
     TrendingUp,
-    Wallet
+    Wallet,
+    User as UserIcon
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -85,6 +86,51 @@ const Account = () => {
                     <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Account Details</h1>
                 </div>
             </header>
+
+            {/* User Account Info Section */}
+            <div className="glass-card mb-6" style={{
+                padding: '24px',
+                borderRadius: '24px',
+                display: 'flex',
+                background: 'linear-gradient(145deg, #1e293b, #0f172a)',
+                alignItems: 'center',
+                gap: '20px',
+                border: 'none',
+                boxShadow: 'var(--shadow-lg)'
+            }}>
+                <div style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '20px',
+                    background: 'linear-gradient(135deg, var(--primary), #818cf8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 8px 16px rgba(99, 102, 241, 0.3)'
+                }}>
+                    <UserIcon size={32} color="white" />
+                </div>
+                <div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '4px' }}>
+                        {user?.email?.split('@')[0] || 'User Profile'}
+                    </h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                        {user?.email || 'user@example.com'}
+                    </p>
+                    <div style={{
+                        marginTop: '8px',
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        background: 'rgba(99, 102, 241, 0.1)',
+                        color: 'var(--primary)',
+                        fontSize: '0.7rem',
+                        fontWeight: '600'
+                    }}>
+                        Premium Account
+                    </div>
+                </div>
+            </div>
 
             {/* Premium Sliding Filter Bar */}
             <div style={{
