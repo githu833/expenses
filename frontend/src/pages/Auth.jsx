@@ -76,28 +76,13 @@ const Auth = () => {
                     {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
             </div>
-            {/* Branding / Logo Area */}
+            {/* Branding Area */}
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <div style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'var(--bg-card)',
-                    borderRadius: '24px',
-                    padding: '12px',
-                    boxShadow: 'var(--shadow-premium)',
-                    border: '1px solid var(--border)'
-                }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', opacity: 0.2 }}></div>
-                </div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: '800', letterSpacing: '-0.5px', marginBottom: '8px' }}>
+                <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.75px', marginBottom: '8px', color: 'var(--primary)' }}>
                     Expense Tracker
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                    {isLogin ? "Welcome back! Please login to your account." : "Start tracking your expenses with us today."}
+                    {isLogin ? "Welcome back! Login to your account." : "Start tracking your expenses today."}
                 </p>
             </div>
 
