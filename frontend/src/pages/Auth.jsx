@@ -165,6 +165,40 @@ const Auth = () => {
                         {isLogin ? 'Register' : 'Sign In'}
                     </button>
                 </div>
+
+                {/* Quick Theme Switcher in Card */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                    <button
+                        onClick={() => theme !== 'light' && toggleTheme()}
+                        style={{
+                            background: theme === 'light' ? 'var(--primary)' : 'var(--glass)',
+                            color: theme === 'light' ? 'white' : 'var(--text-secondary)',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <Sun size={18} />
+                    </button>
+                    <button
+                        onClick={() => theme !== 'dark' && toggleTheme()}
+                        style={{
+                            background: theme === 'dark' ? 'var(--primary)' : 'var(--glass)',
+                            color: theme === 'dark' ? 'white' : 'var(--text-secondary)',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <Moon size={18} />
+                    </button>
+                </div>
             </div>
 
             {/* Footer Tagline */}
