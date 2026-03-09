@@ -74,7 +74,7 @@ const Sources = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Delete this source? (You can only delete sources without transactions)')) {
+        if (window.confirm('Delete this source? (Warning: This will also delete all transactions associated with this source)')) {
             try {
                 await api.delete(`/sources/${id}`);
                 setSources(sources.filter(s => s._id !== id));

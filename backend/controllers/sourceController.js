@@ -56,11 +56,8 @@ const deleteSource = async (req, res) => {
             return res.status(401).json({ message: 'User not authorized' });
         }
 
-        // Check if transactions exist for this source
-        const transactionExists = await Transaction.findOne({ sourceId: req.params.id });
-        if (transactionExists) {
-            return res.status(400).json({ message: 'Cannot delete source with existing transactions' });
-        }
+        // Delete all transactions associated with this source
+        await Transaction.deleteMany({ sourceId: req.params.id });
 
         await source.deleteOne();
         res.json({ message: 'Source removed' });
