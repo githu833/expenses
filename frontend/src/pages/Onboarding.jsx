@@ -63,7 +63,7 @@ const Onboarding = () => {
                 <div style={{
                     width: '64px',
                     height: '64px',
-                    background: 'rgba(99, 102, 241, 0.1)',
+                    background: 'rgba(139, 92, 246, 0.15)',
                     borderRadius: '50%',
                     margin: '0 auto 16px',
                     display: 'flex',

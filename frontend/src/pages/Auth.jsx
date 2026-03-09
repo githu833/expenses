@@ -87,7 +87,7 @@ const Auth = () => {
                     justifyContent: 'center',
                     background: 'linear-gradient(135deg, var(--primary), #818cf8)',
                     borderRadius: '24px',
-                    boxShadow: '0 8px 16px rgba(99, 102, 241, 0.3)',
+                    boxShadow: '0 8px 16px -4px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255,255,255,0.2)',
                     color: 'white'
                 }}>
                     <CheckCircle2 size={36} strokeWidth={2.5} />

@@ -152,11 +152,11 @@ const Account = () => {
                     width: '64px',
                     height: '64px',
                     borderRadius: '20px',
-                    background: 'linear-gradient(135deg, var(--primary), #818cf8)',
+                    background: 'var(--primary-gradient)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 8px 16px rgba(99, 102, 241, 0.3)'
+                    boxShadow: '0 8px 16px -4px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255,255,255,0.2)'
                 }}>
                     <UserIcon size={32} color="white" />
                 </div>
@@ -172,7 +172,7 @@ const Account = () => {
                         display: 'inline-block',
                         padding: '4px 12px',
                         borderRadius: '20px',
-                        background: 'rgba(99, 102, 241, 0.1)',
+                        background: 'rgba(139, 92, 246, 0.15)',
                         color: 'var(--primary)',
                         fontSize: '0.7rem',
                         fontWeight: '600'
@@ -188,7 +188,7 @@ const Account = () => {
                     <div className="flex items-center gap-3">
                         <div style={{
                             width: '40px', height: '40px', borderRadius: '12px',
-                            background: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            background: 'rgba(139, 92, 246, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
                             <Lock size={20} color="var(--primary)" />
                         </div>
@@ -265,7 +265,7 @@ const Account = () => {
                                 </button>
                                 <button
                                     onClick={() => { setPinAction('remove'); setPinStep(1); setTempPin(''); setPinError(''); }}
-                                    style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--expense)', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem' }}
+                                    style={{ background: 'rgba(244, 63, 94, 0.15)', color: 'var(--expense)', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem' }}
                                 >
                                     Remove PIN
                                 </button>
@@ -368,8 +368,8 @@ const Account = () => {
             <div className="glass-card mb-8" style={{
                 padding: '24px',
                 borderRadius: '24px',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.05))',
-                border: '1px solid rgba(99, 102, 241, 0.2)'
+                background: 'var(--card-gradient)',
+                border: '1px solid var(--border)'
             }}>
                 <div className="flex justify-between items-start mb-6">
                     <div>
@@ -380,7 +380,7 @@ const Account = () => {
                         width: '48px',
                         height: '48px',
                         borderRadius: '14px',
-                        background: 'rgba(239, 68, 68, 0.1)',
+                        background: 'rgba(244, 63, 94, 0.15)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -431,7 +431,7 @@ const Account = () => {
                                         width: '44px',
                                         height: '44px',
                                         borderRadius: '12px',
-                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)',
+                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'

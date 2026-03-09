@@ -119,7 +119,7 @@ const Sources = () => {
             {/* Form Section */}
             <div className="glass-card mb-8" style={{ padding: '24px', borderRadius: '24px' }}>
                 <div className="flex items-center gap-3 mb-4">
-                    <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '10px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(139, 92, 246, 0.15)', borderRadius: '10px' }}>
                         <Plus size={20} color="var(--primary)" />
                     </div>
                     <h3 style={{ fontSize: '1.1rem', fontWeight: '600' }}>Add New Account</h3>
@@ -191,7 +191,7 @@ const Sources = () => {
                                             width: '48px',
                                             height: '48px',
                                             borderRadius: '14px',
-                                            background: 'rgba(99, 102, 241, 0.1)',
+                                            background: 'rgba(139, 92, 246, 0.15)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center'

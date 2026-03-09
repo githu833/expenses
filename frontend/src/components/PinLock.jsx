@@ -52,10 +52,10 @@ const PinLock = () => {
         }}>
             <div style={{
                 width: '80px', height: '80px', borderRadius: '50%',
-                background: 'rgba(99, 102, 241, 0.1)',
+                background: 'rgba(139, 92, 246, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: '24px',
-                boxShadow: '0 0 20px rgba(99, 102, 241, 0.2)'
+                boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)'
             }}>
                 <Lock size={40} color="var(--primary)" />
             </div>

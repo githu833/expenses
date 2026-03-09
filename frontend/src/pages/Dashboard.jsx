@@ -112,11 +112,11 @@ const Dashboard = () => {
                         width: '44px',
                         height: '44px',
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, var(--primary), #818cf8)',
+                        background: 'var(--primary-gradient)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+                        boxShadow: '0 8px 16px -4px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255,255,255,0.2)'
                     }}>
                         <User size={22} color="white" />
                     </div>
@@ -154,7 +154,7 @@ const Dashboard = () => {
                 overflow: 'hidden',
                 padding: '28px'
             }}>
-                <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '150px', height: '150px', background: 'var(--primary)', filter: 'blur(80px)', opacity: '0.15' }}></div>
+                <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '180px', height: '180px', background: 'var(--primary)', filter: 'blur(100px)', opacity: '0.25' }}></div>
 
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '8px', opacity: 0.8 }}>Total Balance</p>
                 <div className="flex items-end gap-2 mb-6" onClick={() => setPeekData({ title: 'Total Balance', amount: balance, type: 'balance', isIncome: balance >= 0 })} style={{ cursor: 'pointer' }}>
@@ -193,10 +193,10 @@ const Dashboard = () => {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                     {[
-                        { to: '/add', icon: Plus, label: 'Add', color: 'var(--primary)', bg: 'rgba(99, 102, 241, 0.1)' },
-                        { to: '/sources', icon: Wallet, label: 'Wallet', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
-                        { to: '/history', icon: History, label: 'History', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
-                        { to: '/sources', icon: Settings, label: 'Settings', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }
+                        { to: '/add', icon: Plus, label: 'Add', color: 'var(--primary)', bg: 'rgba(139, 92, 246, 0.12)' },
+                        { to: '/sources', icon: Wallet, label: 'Wallet', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
+                        { to: '/history', icon: History, label: 'History', color: 'var(--income)', bg: 'rgba(16, 185, 129, 0.12)' },
+                        { to: '/sources', icon: Settings, label: 'Settings', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.12)' }
                     ].map((btn, i) => (
                         <Link key={i} to={btn.to} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                             <div style={{
@@ -264,7 +264,7 @@ const Dashboard = () => {
                                         width: '40px',
                                         height: '40px',
                                         borderRadius: '50%',
-                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
@@ -328,7 +328,7 @@ const Dashboard = () => {
                         </div>
                         <div style={{
                             width: '64px', height: '64px', borderRadius: '50%', margin: '0 auto 20px',
-                            background: peekData.type === 'expense' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                            background: peekData.type === 'expense' ? 'rgba(244, 63, 94, 0.15)' : 'rgba(16, 185, 129, 0.15)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
                             {peekData.type === 'expense' ? <TrendingDown size={32} color="var(--expense)" /> : <TrendingUp size={32} color="var(--income)" />}
