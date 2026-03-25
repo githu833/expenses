@@ -174,7 +174,7 @@ const History = () => {
             </div>
 
             {/* Transaction List */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-6">
                 {displayTransactions.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
                         <Calendar size={48} style={{ margin: '0 auto 16px', opacity: 0.3 }} />
@@ -182,67 +182,103 @@ const History = () => {
                         <Link to="/add" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: '600', marginTop: '12px', display: 'block' }}>Start adding entries</Link>
                     </div>
                 ) : (
-                    displayTransactions.map((t, index) => {
-                        const sourceName = sources.find(s => s._id.toString() === t.sourceId?.toString())?.name || 'Unknown';
-                        const toSourceName = t.type === 'transfer' ? (sources.find(s => s._id.toString() === t.toSourceId?.toString())?.name || 'Unknown') : '';
+                    (() => {
+                        const sorted = [...displayTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                        const groups = [];
+                        let lastDate = "";
 
-                        return (
-                            <div key={t._id} className="glass-card" style={{
-                                padding: '16px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                background: 'var(--bg-card)',
-                                marginBottom: '4px',
-                                borderRadius: '16px',
-                                border: '1px solid var(--border)'
-                            }}>
-                                <div className="flex items-center gap-4">
-                                    <div style={{
-                                        width: '44px',
-                                        height: '44px',
-                                        borderRadius: '14px',
-                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.1)' : t.type === 'expense' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(139, 92, 246, 0.1)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        {t.type === 'income' ? <TrendingUp size={20} color="var(--income)" /> : t.type === 'expense' ? <TrendingDown size={20} color="var(--expense)" /> : <Plus size={20} color="var(--primary)" style={{ transform: 'rotate(45deg)' }} />}
-                                    </div>
-                                    <div>
-                                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '2px' }}>
-                                            {t.type === 'income' ? (t.source || 'Income') : t.type === 'expense' ? (t.purpose || 'Expense') : `Transfer to ${toSourceName}`}
-                                        </h4>
-                                        <div className="flex items-center gap-2" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                            <Wallet size={12} />
-                                            <span>{t.type === 'transfer' ? `From ${sourceName}` : sourceName}</span>
-                                            <span>•</span>
-                                            <span>{new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                                        </div>
-                                    </div>
+                        sorted.forEach(t => {
+                            const d = new Date(t.date);
+                            const dateStr = d.toLocaleDateString(undefined, { 
+                                weekday: 'short', 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined 
+                            });
+
+                            if (dateStr !== lastDate) {
+                                lastDate = dateStr;
+                                groups.push({ date: dateStr, items: [t] });
+                            } else {
+                                groups[groups.length - 1].items.push(t);
+                            }
+                        });
+
+                        return groups.map((group, gIdx) => (
+                            <div key={group.date} className="animate-in" style={{ animationDelay: `${gIdx * 0.05}s` }}>
+                                <div className="flex items-center gap-2 mb-3" style={{ paddingLeft: '4px' }}>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                        {group.date}
+                                    </span>
+                                    <div style={{ flex: 1, height: '1px', background: 'var(--border)', opacity: 0.5 }}></div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div style={{ textAlign: 'right' }}>
-                                        <p style={{
-                                            fontWeight: '700',
-                                            fontSize: '1rem',
-                                            color: t.type === 'income' ? 'var(--income)' : t.type === 'expense' ? 'var(--text-primary)' : 'var(--primary)'
-                                        }}>
-                                            {t.type === 'income' ? '+' : t.type === 'expense' ? '-' : ''}₹{t.amount.toLocaleString()}
-                                        </p>
-                                        <div className="flex gap-3 justify-end mt-1">
-                                            <Link to="/add" state={{ transaction: t }} style={{ color: 'var(--text-muted)' }}>
-                                                <Edit2 size={14} />
-                                            </Link>
-                                            <button onClick={() => handleDelete(t._id)} style={{ color: 'var(--text-muted)', background: 'transparent', padding: 0 }}>
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div className="flex flex-col gap-2">
+                                    {group.items.map((t) => {
+                                        const sourceName = sources.find(s => s._id.toString() === t.sourceId?.toString())?.name || 'Unknown';
+                                        const toSourceName = t.type === 'transfer' ? (sources.find(s => s._id.toString() === t.toSourceId?.toString())?.name || 'Unknown') : '';
+
+                                        return (
+                                            <div key={t._id} className="glass-card" style={{
+                                                padding: '16px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                background: 'var(--bg-card)',
+                                                borderRadius: '16px',
+                                                border: '1px solid var(--border)',
+                                                transition: 'transform 0.2s',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => navigate('/add', { state: { transaction: t } })}
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div style={{
+                                                        width: '44px',
+                                                        height: '44px',
+                                                        borderRadius: '14px',
+                                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.1)' : t.type === 'expense' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(139, 92, 246, 0.1)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        {t.type === 'income' ? <TrendingUp size={20} color="var(--income)" /> : t.type === 'expense' ? <TrendingDown size={20} color="var(--expense)" /> : <Plus size={20} color="var(--primary)" style={{ transform: 'rotate(45deg)' }} />}
+                                                    </div>
+                                                    <div>
+                                                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '2px' }}>
+                                                            {t.type === 'income' ? (t.source || 'Income') : t.type === 'expense' ? (t.purpose || 'Expense') : `Transfer to ${toSourceName}`}
+                                                        </h4>
+                                                        <div className="flex items-center gap-2" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                                            <Wallet size={12} />
+                                                            <span>{t.type === 'transfer' ? `From ${sourceName}` : sourceName}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <div style={{ textAlign: 'right' }}>
+                                                        <p style={{
+                                                            fontWeight: '700',
+                                                            fontSize: '1rem',
+                                                            color: t.type === 'income' ? 'var(--income)' : t.type === 'expense' ? 'var(--text-primary)' : 'var(--primary)'
+                                                        }}>
+                                                            {t.type === 'income' ? '+' : t.type === 'expense' ? '-' : ''}₹{t.amount.toLocaleString()}
+                                                        </p>
+                                                        <div className="flex gap-3 justify-end mt-1" onClick={(e) => e.stopPropagation()}>
+                                                            <Link to="/add" state={{ transaction: t }} style={{ color: 'var(--text-muted)' }}>
+                                                                <Edit2 size={14} />
+                                                            </Link>
+                                                            <button onClick={() => handleDelete(t._id)} style={{ color: 'var(--text-muted)', background: 'transparent', padding: 0 }}>
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                        );
-                    })
+                        ));
+                    })()
                 )}
             </div>
 

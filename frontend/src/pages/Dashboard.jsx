@@ -306,9 +306,11 @@ const Dashboard = () => {
                                         {t.type === 'income' ? <TrendingUp size={18} color="var(--income)" /> : <TrendingDown size={18} color="var(--expense)" />}
                                     </div>
                                     <div>
-                                        <h4 style={{ fontSize: '0.9rem', fontWeight: '500' }}>{t.description || 'Transaction'}</h4>
+                                        <h4 style={{ fontSize: '0.9rem', fontWeight: '500' }}>
+                                            {t.type === 'income' ? (t.source || 'Income') : t.type === 'expense' ? (t.purpose || 'Expense') : 'Transfer'}
+                                        </h4>
                                         <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-                                            {new Date(t.date).toLocaleDateString()} • {t.category || 'General'}
+                                            {new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} • {t.category || 'General'}
                                         </p>
                                     </div>
                                 </div>
