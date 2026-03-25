@@ -44,6 +44,10 @@ const Account = () => {
                 setTransactions(res.data);
             } catch (err) {
                 console.error('Error fetching transactions', err);
+                if (err.response?.status === 401) {
+                    logout();
+                    navigate('/auth');
+                }
             } finally {
                 setLoading(false);
             }

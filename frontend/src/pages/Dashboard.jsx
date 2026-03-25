@@ -50,6 +50,10 @@ const Dashboard = () => {
             }
         } catch (err) {
             console.error('Error fetching data', err);
+            if (err.response?.status === 401) {
+                logout();
+                navigate('/auth');
+            }
         } finally {
             setLoading(false);
         }
