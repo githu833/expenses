@@ -1,7 +1,24 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+    
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    
+    // In production/deployment, we usually want to use the same domain/protocol or a specific API subdomain
+    // For localhost, we default to port 5000
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return `http://${hostname}:5000/api`;
+    }
+    
+    // Fallback: If no VITE_API_URL is provided, assume /api on the same origin or a relative path
+    // This is safer for PWAs hosted on cloud platforms
+    return `${protocol}//${hostname}${window.location.port ? ':' + window.location.port : ''}/api`;
+};
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5000/api`,
+    baseURL: getBaseURL(),
 });
 
 // Cache for GET requests

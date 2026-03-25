@@ -51,18 +51,15 @@ export const SecurityProvider = ({ children }) => {
             // because OS intercepts them before browser, but we can try to obscure on blur
         };
 
-        window.addEventListener('blur', () => {
-            // If window loses focus (like when snip tool opens), lock it
-            if (pin) setIsLocked(true);
-        });
-
         document.addEventListener('visibilitychange', handleVisibilityChange);
         window.addEventListener('keyup', handleKeyDown);
-
+        
+        // Removed the blur listener as it's too aggressive for PWAs 
+        // when system prompts (like install or reload) appear.
+        
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('keyup', handleKeyDown);
-            window.removeEventListener('blur', () => { });
         };
     }, [pin]);
 

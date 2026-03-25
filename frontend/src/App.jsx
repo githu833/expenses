@@ -21,6 +21,21 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate to="/auth" />;
 };
 
+const PublicRoute = ({ children, redirectTo = "/dashboard", forceRedirect = false }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  
+  const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                (window.navigator.standalone === true) ||
+                document.referrer.includes('android-app://') ||
+                window.location.search.includes('mode=standalone');
+                
+  if (user && (forceRedirect || isPWA)) {
+    return <Navigate to={redirectTo} />;
+  }
+  return children;
+};
+
 const ProtectedApp = ({ children }) => {
   const { isLocked } = useSecurity();
   if (isLocked) return <PinLock />;
@@ -37,11 +52,11 @@ function App() {
               <div className="min-h-screen">
                 <ReloadPrompt />
                 <Routes>
-                  {/* Landing Page at Root */}
-                  <Route path="/" element={<Landing />} />
+                  {/* Landing Page at Root - Redirect to dashboard ONLY in PWA mode (if logged in) */}
+                  <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
                   
-                  {/* Auth Route */}
-                  <Route path="/auth" element={<Auth />} />
+                  {/* Auth Route - Redirect to dashboard if already logged in (Always) */}
+                  <Route path="/auth" element={<PublicRoute forceRedirect={true}><Auth /></PublicRoute>} />
                   
                   {/* Protected Routes */}
                   <Route

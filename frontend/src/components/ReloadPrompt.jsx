@@ -23,28 +23,47 @@ function ReloadPrompt() {
     if (!offlineReady && !needUpdate) return null;
 
     return (
-        <div
-            className="fixed bottom-4 right-4 z-50 flex flex-col items-center gap-4 rounded-xl border border-white/10 bg-[#161821]/90 p-5 shadow-2xl backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
-        >
-            <div className="flex flex-col gap-1 text-center">
+        <div className="glass-card" style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 1000,
+            width: 'calc(100% - 48px)',
+            maxWidth: '350px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            background: 'rgba(23, 23, 27, 0.95)',
+            boxShadow: 'var(--shadow-premium), var(--shadow-glow)',
+            animation: 'slideUp 0.3s ease-out'
+        }}>
+            <div style={{ textAlign: 'center' }}>
                 {offlineReady ? (
-                    <p className="text-sm font-medium text-white/90">App is ready to work offline!</p>
+                    <p style={{ fontSize: '0.9rem', fontWeight: '600' }}>App is ready to work offline!</p>
                 ) : (
-                    <p className="text-sm font-medium text-white/90">New content available, click on reload button to update.</p>
+                    <p style={{ fontSize: '0.9rem', fontWeight: '600' }}>New content available! Update now for the latest features.</p>
                 )}
             </div>
-            <div className="flex w-full gap-2">
+            <div className="flex gap-2">
                 {needUpdate && (
                     <button
                         onClick={() => updateServiceWorker(true)}
-                        className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 active:scale-95"
+                        className="btn-primary"
+                        style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
                     >
                         Reload
                     </button>
                 )}
                 <button
                     onClick={close}
-                    className="flex-1 rounded-lg bg-white/5 px-4 py-2 text-sm font-semibold text-white/70 transition-colors hover:bg-white/10 active:scale-95"
+                    style={{ 
+                        flex: 1, 
+                        background: 'var(--glass)', 
+                        color: 'var(--text-secondary)',
+                        padding: '10px',
+                        fontSize: '0.85rem'
+                    }}
                 >
                     Close
                 </button>
