@@ -18,11 +18,7 @@ const Landing = () => {
     const navigate = useNavigate();
 
     const handleGetStarted = () => {
-        if (user) {
-            navigate('/dashboard');
-        } else {
-            navigate('/auth');
-        }
+        navigate('/auth');
     };
 
     return (
@@ -57,19 +53,20 @@ const Landing = () => {
                     </div>
                     <span style={{ fontSize: '1.25rem', fontWeight: '800', tracking: '-0.5px' }}>Expense.io</span>
                 </div>
-                <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                    {!user ? (
-                        <>
-                            <Link to="/auth" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' }}>Login</Link>
-                            <button onClick={() => navigate('/auth')} className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
-                                Sign Up
-                            </button>
-                        </>
-                    ) : (
-                        <button onClick={() => navigate('/dashboard')} className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
-                            Dashboard
-                        </button>
-                    )}
+                <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                    <button 
+                        onClick={() => navigate('/auth')} 
+                        style={{ background: 'transparent', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer' }}
+                    >
+                        Sign In
+                    </button>
+                    <button 
+                        onClick={() => navigate('/auth')} 
+                        className="btn-primary" 
+                        style={{ padding: '10px 24px', fontSize: '0.9rem' }}
+                    >
+                        Join Now
+                    </button>
                 </div>
             </nav>
 
