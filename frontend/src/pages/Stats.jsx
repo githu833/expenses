@@ -69,6 +69,8 @@ const Stats = () => {
 
     const filterTransactions = () => {
         return transactions.filter(t => {
+            if (t.purpose === 'Transfer In' || t.purpose === 'Initial Balance Setup') return false;
+
             const tDate = new Date(t.date);
             let matchesDate = false;
 

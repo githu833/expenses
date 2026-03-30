@@ -51,6 +51,18 @@ const AddEntry = () => {
         fetchSources();
     }, [editingTransaction]);
 
+    // When sourceId changes, ensure toSourceId doesn't point to the same account
+    useEffect(() => {
+        if (formData.type === 'transfer' && formData.sourceId && sources.length > 0) {
+            if (formData.toSourceId === formData.sourceId || !formData.toSourceId) {
+                const firstAvailable = sources.find(s => s._id !== formData.sourceId);
+                if (firstAvailable) {
+                    setFormData(prev => ({ ...prev, toSourceId: firstAvailable._id }));
+                }
+            }
+        }
+    }, [formData.sourceId, formData.type, sources]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
