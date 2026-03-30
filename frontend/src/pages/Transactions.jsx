@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Save, Plus, Landmark, Calendar, FileText, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Landmark, Calendar, FileText, ChevronDown, Settings } from 'lucide-react';
 
 const AddEntry = () => {
     const navigate = useNavigate();
@@ -86,25 +86,39 @@ const AddEntry = () => {
     return (
         <div className="container animate-in">
             {/* Header */}
-            <header className="flex items-center gap-4 mb-8">
-                <button
-                    onClick={() => navigate(-1)}
-                    style={{
-                        background: 'var(--glass)',
-                        color: 'var(--text-primary)',
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <ArrowLeft size={22} />
-                </button>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                    {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
-                </h1>
+            <header className="flex items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => navigate(-1)}
+                        style={{
+                            background: 'var(--glass)',
+                            color: 'var(--text-primary)',
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <ArrowLeft size={22} />
+                    </button>
+                    <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
+                    </h1>
+                </div>
+                <Link to="/account" style={{
+                    background: 'var(--glass)',
+                    color: 'var(--text-primary)',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Settings size={20} />
+                </Link>
             </header>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">

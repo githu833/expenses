@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Plus, Trash2, ArrowLeft, Wallet, Edit2, Save, X, CreditCard, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Plus, Trash2, ArrowLeft, Wallet, Edit2, Save, X, CreditCard, ChevronRight, Settings } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Sources = () => {
     const [sources, setSources] = useState([]);
@@ -97,23 +97,37 @@ const Sources = () => {
     return (
         <div className="container animate-in">
             {/* Header Area */}
-            <header className="flex items-center gap-4 mb-8">
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    style={{
-                        background: 'var(--glass)',
-                        color: 'var(--text-primary)',
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <ArrowLeft size={20} />
-                </button>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Sources & Wallets</h1>
+            <header className="flex items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        style={{
+                            background: 'var(--glass)',
+                            color: 'var(--text-primary)',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+                    <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Sources & Wallets</h1>
+                </div>
+                <Link to="/account" style={{
+                    background: 'var(--glass)',
+                    color: 'var(--text-primary)',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Settings size={20} />
+                </Link>
             </header>
 
             {/* Form Section */}

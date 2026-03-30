@@ -131,7 +131,7 @@ const Dashboard = () => {
             {/* Header */}
             <header className="flex justify-between items-center mb-6" style={{ padding: '0 4px' }}>
                 <div className="flex items-center gap-3">
-                    <div style={{
+                    <Link to="/account" style={{
                         width: '44px',
                         height: '44px',
                         borderRadius: '50%',
@@ -142,7 +142,7 @@ const Dashboard = () => {
                         boxShadow: '0 8px 16px -4px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255,255,255,0.2)'
                     }}>
                         <User size={22} color="white" />
-                    </div>
+                    </Link>
                     <div style={{ overflow: 'hidden' }}>
                         <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '-2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Welcome back,</p>
                         <h1 style={{ fontSize: '1.1rem', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email?.split('@')[0] || 'User'}</h1>

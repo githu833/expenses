@@ -10,6 +10,7 @@ import Sources from './pages/Sources';
 import Onboarding from './pages/Onboarding';
 import History from './pages/History';
 import Account from './pages/Account';
+import Stats from './pages/Stats';
 import Footer from './components/Footer';
 import ReloadPrompt from './components/ReloadPrompt';
 import { SecurityProvider, useSecurity } from './context/SecurityContext';
@@ -95,15 +96,24 @@ function App() {
                       </PrivateRoute>
                     }
                   />
-                  <Route
-                    path="/history"
-                    element={
-                      <PrivateRoute>
-                        <History />
-                        <Footer />
-                      </PrivateRoute>
-                    }
-                  />
+                    <Route
+                      path="/history"
+                      element={
+                        <PrivateRoute>
+                          <History />
+                          <Footer />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/stats"
+                      element={
+                        <PrivateRoute>
+                          <Stats />
+                          <Footer />
+                        </PrivateRoute>
+                      }
+                    />
                   <Route
                     path="/onboarding"
                     element={

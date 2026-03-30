@@ -11,7 +11,13 @@ import {
     Filter,
     ArrowLeft,
     Calendar,
-    Wallet
+    Wallet,
+    Sun,
+    Moon,
+    Download,
+    Eye,
+    EyeOff,
+    Settings
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -113,6 +119,18 @@ const History = () => {
                     >
                         <Search size={18} />
                     </button>
+                    <Link to="/account" style={{
+                        background: 'var(--glass)',
+                        color: 'var(--text-primary)',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <Settings size={20} />
+                    </Link>
                 </div>
             </header>
 

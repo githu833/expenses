@@ -132,7 +132,7 @@ const Account = () => {
                     >
                         <ArrowLeft size={20} />
                     </button>
-                    <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Account Details</h1>
+                    <h1 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Account Settings</h1>
                 </div>
                 <button
                     onClick={toggleTheme}
@@ -287,189 +287,29 @@ const Account = () => {
                 </div>
             </div>
 
-            {/* Premium Sliding Filter Bar */}
-            <div style={{
-                background: 'var(--bg-card)',
-                padding: '6px',
-                borderRadius: '16px',
-                display: 'flex',
-                marginBottom: '16px',
-                position: 'relative',
-                border: '1px solid var(--border)'
-            }}>
-                {['daily', 'monthly', 'yearly'].map((type) => (
-                    <button
-                        key={type}
-                        onClick={() => {
-                            setFilter(type);
-                            setCurrentDate(new Date()); // Reset to today when changing filter
-                        }}
-                        style={{
-                            flex: 1,
-                            padding: '12px',
-                            borderRadius: '12px',
-                            fontSize: '0.85rem',
-                            fontWeight: '600',
-                            zIndex: 2,
-                            background: filter === type ? 'var(--primary)' : 'transparent',
-                            color: filter === type ? 'white' : 'var(--text-secondary)',
-                            transition: 'all 0.3s ease',
-                            textTransform: 'capitalize'
-                        }}
-                    >
-                        {type}
-                    </button>
-                ))}
-            </div>
-
-            {/* Date Navigation Section */}
-            <div className="flex items-center justify-between mb-6" style={{
-                background: 'var(--glass)',
-                padding: '12px 20px',
-                borderRadius: '16px',
-                border: '1px solid var(--border)'
-            }}>
+            {/* Quick Actions / Navigation to Stats */}
+            <div className="glass-card mb-6" style={{ padding: '20px', borderRadius: '24px' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '16px' }}>Quick View</h3>
                 <button
-                    onClick={() => navigateDate(-1)}
-                    style={{ background: 'transparent', color: 'var(--text-primary)' }}
-                >
-                    <ChevronLeft size={24} />
-                </button>
-                <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>{getDateDisplay()}</p>
-                </div>
-                <button
-                    onClick={() => navigateDate(1)}
-                    style={{ background: 'transparent', color: 'var(--text-primary)' }}
-                >
-                    <ChevronRight size={24} />
-                </button>
-            </div>
-
-            {/* Type Selector (All/Income/Expense) */}
-            <div className="flex gap-2 mb-8">
-                {['all', 'income', 'expense'].map((type) => (
-                    <button
-                        key={type}
-                        onClick={() => setDisplayType(type)}
-                        style={{
-                            flex: 1,
-                            padding: '10px',
-                            borderRadius: '12px',
-                            fontSize: '0.75rem',
-                            fontWeight: '600',
-                            background: displayType === type ? 'var(--primary)' : 'var(--glass)',
-                            color: displayType === type ? 'white' : 'var(--text-secondary)',
-                            border: '1px solid var(--border)',
-                            textTransform: 'capitalize'
-                        }}
-                    >
-                        {type}
-                    </button>
-                ))}
-            </div>
-
-            {/* Expenditure Summary Card */}
-            <div className="glass-card mb-8" style={{
-                padding: '24px',
-                borderRadius: '24px',
-                background: 'var(--card-gradient)',
-                border: '1px solid var(--border)'
-            }}>
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '4px' }}>Total Expenditure</p>
-                        <h2 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--expense)' }}>₹{totalExpense.toLocaleString()}</h2>
-                    </div>
-                    <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '14px',
-                        background: 'rgba(244, 63, 94, 0.15)',
+                    onClick={() => navigate('/stats')}
+                    style={{
+                        width: '100%',
+                        padding: '16px',
+                        borderRadius: '16px',
+                        background: 'var(--glass)',
+                        color: 'var(--text-primary)',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TrendingDown size={24} color="var(--expense)" />
+                        justifyContent: 'space-between',
+                        border: '1px solid var(--border)'
+                    }}
+                >
+                    <div className="flex items-center gap-3">
+                        <TrendingUp size={20} color="var(--income)" />
+                        <span style={{ fontWeight: '600' }}>View Financial Analytics</span>
                     </div>
-                </div>
-
-                <div style={{ height: '1px', background: 'var(--border)', margin: '20px 0' }}></div>
-
-                <div className="flex justify-between">
-                    <div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginBottom: '2px' }}>Total Income</p>
-                        <p style={{ fontWeight: '700', fontSize: '1.1rem', color: 'var(--income)' }}>+₹{totalIncome.toLocaleString()}</p>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginBottom: '2px' }}>Net Flow</p>
-                        <p style={{ fontWeight: '700', fontSize: '1.1rem', color: (totalIncome - totalExpense) >= 0 ? 'var(--income)' : 'var(--expense)' }}>
-                            {(totalIncome - totalExpense) >= 0 ? '+' : '-'}₹{Math.abs(totalIncome - totalExpense).toLocaleString()}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Transactions Section */}
-            <div className="mb-10">
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '16px', textTransform: 'capitalize' }}>
-                    {displayType === 'all' ? 'Transactions' : displayType} Breakdown
-                </h3>
-                <div className="flex flex-col gap-3">
-                    {currentTransactions.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
-                            <Calendar size={40} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-                            <p>No transactions for this period.</p>
-                        </div>
-                    ) : (
-                        currentTransactions.map((t) => (
-                            <div key={t._id} className="glass-card" style={{
-                                padding: '16px',
-                                borderRadius: '18px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                background: 'var(--glass)'
-                            }}>
-                                <div className="flex items-center gap-4">
-                                    <div style={{
-                                        width: '44px',
-                                        height: '44px',
-                                        borderRadius: '12px',
-                                        background: t.type === 'income' ? 'rgba(16, 185, 129, 0.12)' : t.type === 'expense' ? 'rgba(244, 63, 94, 0.12)' : 'rgba(139, 92, 246, 0.12)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        {t.type === 'income' ?
-                                            <TrendingUp size={20} color="var(--income)" /> :
-                                            t.type === 'expense' ? <TrendingDown size={20} color="var(--expense)" /> :
-                                            <ArrowRight size={20} color="var(--primary)" />
-                                        }
-                                    </div>
-                                    <div>
-                                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600' }}>
-                                            {t.type === 'income' ? (t.source || 'Income') : t.type === 'expense' ? (t.purpose || 'Expense') : 'Transfer'}
-                                        </h4>
-                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                            {new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div style={{ textAlign: 'right' }}>
-                                    <p style={{
-                                        fontWeight: '700',
-                                        fontSize: '1rem',
-                                        color: t.type === 'income' ? 'var(--income)' : t.type === 'expense' ? 'var(--text-primary)' : 'var(--primary)'
-                                    }}>
-                                        {t.type === 'income' ? '+' : t.type === 'expense' ? '-' : ''}₹{t.amount.toLocaleString()}
-                                    </p>
-                                    <ArrowUpRight size={14} color="var(--text-muted)" />
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
+                    <ArrowRight size={18} />
+                </button>
             </div>
 
             {/* Sign Out Button */}
@@ -500,7 +340,7 @@ const Account = () => {
                     Sign Out from Device
                 </button>
                 <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '12px' }}>
-                    Version 1.2.0 • Build 2026.03.25
+                    Version 1.3.0 • Build 2026.03.30
                 </p>
             </div>
 
