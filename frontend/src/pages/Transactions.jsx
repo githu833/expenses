@@ -58,11 +58,23 @@ const AddEntry = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        // Prepare payload: Remove irrelevant fields to avoid backend validation errors (e.g. empty strings for ObjectIds)
+        const payload = { ...formData };
+        if (payload.type !== 'transfer') {
+            delete payload.toSourceId;
+        }
+        if (payload.type === 'income') {
+            delete payload.purpose;
+        } else {
+            delete payload.source;
+        }
+
         try {
             if (editingTransaction) {
-                await api.put(`/transactions/${editingTransaction._id}`, formData);
+                await api.put(`/transactions/${editingTransaction._id}`, payload);
             } else {
-                await api.post('/transactions', formData);
+                await api.post('/transactions', payload);
             }
             navigate('/history');
         } catch (err) {
