@@ -293,7 +293,10 @@ const Dashboard = () => {
                     </div>
                 ) : (
                     <div className="flex flex-col gap-1">
-                        {transactions.slice(0, 5).map((t) => (
+                        {transactions
+                            .filter(t => t.purpose !== 'Transfer In')
+                            .slice(0, 5)
+                            .map((t) => (
                             <div key={t._id} className="flex items-center justify-between p-3" style={{ borderBottom: '1px solid var(--border)' }}>
                                 <div className="flex items-center gap-3">
                                     <div style={{

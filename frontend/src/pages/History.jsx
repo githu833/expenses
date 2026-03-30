@@ -71,9 +71,9 @@ const History = () => {
     );
 
     const displayTransactions = transactions
-        .filter(t => t.purpose !== 'Initial Balance Setup')
+        .filter(t => t.purpose !== 'Initial Balance Setup' && t.purpose !== 'Transfer In')
         .filter(t => {
-            const matchesSearch = (t.purpose || t.source || (t.type === 'transfer' ? 'Transfer' : '')).toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch = (t.purpose || t.source || (t.type === 'transfer' ? 'Transfer' : '') || '').toLowerCase().includes(searchQuery.toLowerCase());
             const matchesType = filterType === 'all' || t.type === filterType;
             return matchesSearch && matchesType;
         });
@@ -267,7 +267,7 @@ const History = () => {
                                                         </h4>
                                                         <div className="flex items-center gap-2" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                                                             <Wallet size={12} />
-                                                            <span>{t.type === 'transfer' ? `From ${sourceName}` : sourceName}</span>
+                                                            <span>{t.type === 'transfer' ? `From ${sourceName} → ${toSourceName}` : sourceName}</span>
                                                         </div>
                                                     </div>
                                                 </div>

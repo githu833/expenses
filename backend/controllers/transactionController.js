@@ -65,6 +65,8 @@ const addTransaction = async (req, res) => {
 };
 
 const updateTransaction = async (req, res) => {
+    const { type, amount, category, date, purpose, source, sourceId, toSourceId } = req.body;
+
     try {
         const transaction = await Transaction.findById(req.params.id);
 
@@ -76,6 +78,73 @@ const updateTransaction = async (req, res) => {
             return res.status(401).json({ message: 'User not authorized' });
         }
 
+        const wasTransfer = transaction.type === 'transfer' && transaction.transferId;
+        const isTransfer = type === 'transfer';
+
+        // CASE 1: Transfer -> Transfer
+        if (wasTransfer && isTransfer) {
+            const transferId = transaction.transferId;
+
+            // Update both legs
+            const [debit, credit] = await Promise.all([
+                Transaction.findOneAndUpdate(
+                    { transferId, purpose: 'Transfer Out' },
+                    { amount, date, sourceId, toSourceId },
+                    { new: true }
+                ),
+                Transaction.findOneAndUpdate(
+                    { transferId, purpose: 'Transfer In' },
+                    { amount, date, sourceId: toSourceId, toSourceId: sourceId },
+                    { new: true }
+                )
+            ]);
+
+            return res.json(transaction.purpose === 'Transfer In' ? credit : debit);
+        }
+
+        // CASE 2: Transfer -> Something Else (Income/Expense)
+        if (wasTransfer && !isTransfer) {
+            const transferId = transaction.transferId;
+
+            // Delete the other leg
+            await Transaction.deleteMany({ transferId, _id: { $ne: transaction._id } });
+
+            // Update current record to new type and remove transfer metadata
+            const updated = await Transaction.findByIdAndUpdate(
+                req.params.id,
+                { type, amount, category, date, purpose, source, sourceId, $unset: { toSourceId: '', transferId: '' } },
+                { new: true }
+            );
+            return res.json(updated);
+        }
+
+        // CASE 3: Something Else -> Transfer
+        if (!wasTransfer && isTransfer) {
+            const transferId = new mongoose.Types.ObjectId();
+
+            // Update current record to be the "Transfer Out" leg
+            const debit = await Transaction.findByIdAndUpdate(
+                req.params.id,
+                { type, amount, date, sourceId, toSourceId, transferId, purpose: 'Transfer Out', $unset: { category: '', source: '' } },
+                { new: true }
+            );
+
+            // Create the "Transfer In" leg
+            await Transaction.create({
+                userId: req.user._id,
+                type: 'transfer',
+                amount,
+                date,
+                sourceId: toSourceId,
+                toSourceId: sourceId,
+                transferId,
+                purpose: 'Transfer In',
+            });
+
+            return res.json(debit);
+        }
+
+        // CASE 4: Normal Update (Income -> Income, Expense -> Income, etc.)
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             req.params.id,
             req.body,
