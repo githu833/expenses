@@ -7,7 +7,44 @@ let serviceAccount;
 try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
         // Support for Render/Production via environment variable
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        let saValue = process.env.FIREBASE_SERVICE_ACCOUNT.trim();
+        
+        // 1. Remove wrapping quotes if present
+        if ((saValue.startsWith('"') && saValue.endsWith('"')) || 
+            (saValue.startsWith("'") && saValue.endsWith("'"))) {
+            saValue = saValue.slice(1, -1).trim();
+        }
+
+        // 2. Detect and decode Base64
+        if (!saValue.startsWith('{') && !saValue.startsWith('[')) {
+            try {
+                const decoded = Buffer.from(saValue, 'base64').toString('utf8');
+                if (decoded.trim().startsWith('{')) {
+                    saValue = decoded.trim();
+                }
+            } catch (e) { /* Not base64, continue */ }
+        }
+
+        // 3. Replace escaped newlines (\\n) with actual newlines (\n)
+        // This is common when pasting from a JSON file into a UI.
+        if (saValue.includes('\\n')) {
+            saValue = saValue.replace(/\\n/g, '\n');
+        }
+
+        // 4. Parse the JSON
+        try {
+            serviceAccount = JSON.parse(saValue);
+        } catch (parseError) {
+            console.error('❌ JSON Parse Error:', parseError.message);
+            // Log first few chars to help identify the issue (safe part of Firebase JSON)
+            console.error('   String starts with:', saValue.substring(0, 50).replace(/\n/g, '\\n') + '...');
+            throw parseError;
+        }
+
+        // 5. Handle double-stringification
+        if (typeof serviceAccount === 'string') {
+            serviceAccount = JSON.parse(serviceAccount);
+        }
     } else {
         // Fallback for local development
         const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
