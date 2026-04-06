@@ -2,16 +2,7 @@ import axios from 'axios';
 
 const getBaseURL = () => {
     if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-    
-    // If we're in development mode (running via npm run dev), use the Vite proxy
-    if (import.meta.env.DEV) {
-        return '/api';
-    }
-    
-    const protocol = window.location.protocol;
-    const hostname = window.location.hostname;
-    
-    return `${protocol}//${hostname}${window.location.port ? ':' + window.location.port : ''}/api`;
+    return '/api';
 };
 
 const api = axios.create({

@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -11,17 +12,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Basic Route
-app.get('/', (req, res) => {
-    res.json({ status: 'success', message: 'Expense Tracker API is running' });
-});
-
-// Routes
+// API Routes (must come before static files)
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/sources', require('./routes/sourceRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/budget', require('./routes/budgetRoutes'));
+
+// Serve frontend in production
+const frontendDist = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDist));
+
+// SPA fallback: any non-API route serves index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+});
 
 // Database Connection
 const PORT = process.env.PORT || 5000;
