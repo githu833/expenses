@@ -13,15 +13,31 @@ const AddEntry = () => {
         return new Date(date.getTime() - offset).toISOString().slice(0, 16);
     };
 
-    const [formData, setFormData] = useState({
-        type: 'expense',
-        amount: '',
-        sourceId: '',
-        toSourceId: '',
-        date: getLocalTime(),
-        purpose: '',
-        source: '',
-        category: ''
+    const [formData, setFormData] = useState(() => {
+        const base = {
+            type: 'expense',
+            amount: '',
+            sourceId: '',
+            toSourceId: '',
+            date: getLocalTime(),
+            purpose: '',
+            source: '',
+            category: ''
+        };
+        if (editingTransaction) {
+            return {
+                ...base,
+                type: editingTransaction.type,
+                amount: editingTransaction.amount,
+                sourceId: editingTransaction.sourceId,
+                toSourceId: editingTransaction.toSourceId || '',
+                date: getLocalTime(new Date(editingTransaction.date)),
+                purpose: editingTransaction.purpose || '',
+                source: editingTransaction.source || '',
+                category: editingTransaction.category || ''
+            };
+        }
+        return base;
     });
     const [sources, setSources] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -39,18 +55,7 @@ const AddEntry = () => {
                 const { data } = await api.get('/sources');
                 setSources(data);
 
-                if (editingTransaction) {
-                    setFormData({
-                        type: editingTransaction.type,
-                        amount: editingTransaction.amount,
-                        sourceId: editingTransaction.sourceId,
-                        toSourceId: editingTransaction.toSourceId || '',
-                        date: getLocalTime(new Date(editingTransaction.date)),
-                        purpose: editingTransaction.purpose || '',
-                        source: editingTransaction.source || '',
-                        category: editingTransaction.category || ''
-                    });
-                } else if (data.length > 0) {
+                if (!editingTransaction && data.length > 0) {
                     setFormData(prev => ({ ...prev, sourceId: data[0]._id, toSourceId: data.length > 1 ? data[1]._id : '' }));
                 }
             } catch (err) {
@@ -119,6 +124,12 @@ const AddEntry = () => {
         setLoading(true);
 
         const payload = { ...formData };
+        
+        // Ensure date is sent as UTC ISO string to prevent timezone shifts
+        if (payload.date) {
+            payload.date = new Date(payload.date).toISOString();
+        }
+
         if (payload.type !== 'transfer') {
             delete payload.toSourceId;
         }
