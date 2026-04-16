@@ -173,8 +173,8 @@ export const PinPad = ({ onComplete, hasError, resetError }) => {
     }, [handleInput, handleDelete]);
 
     return (
-        <div style={{ width: '100%', maxWidth: '300px', margin: '0 auto' }}>
-            <div className={`flex gap-4 mb-10 justify-center ${hasError ? 'shake' : ''}`} style={{ display: 'flex', gap: '16px', marginBottom: '40px' }}>
+        <div style={{ width: '100%', maxWidth: '360px', margin: '0 auto', padding: '0 10px' }}>
+            <div className={`flex gap-4 mb-10 justify-center ${hasError ? 'shake' : ''}`} style={{ display: 'flex', gap: '24px', marginBottom: '48px' }}>
                 {Array.from({ length: pinLength }).map((_, i) => (
                     <div key={i} style={{
                         width: '20px', height: '20px', borderRadius: '50%',
@@ -187,31 +187,34 @@ export const PinPad = ({ onComplete, hasError, resetError }) => {
                 ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
                     <button key={n} onClick={() => handleInput(n.toString())} style={{
-                        height: '64px', fontSize: '1.5rem', fontWeight: '600',
-                        background: 'var(--bg-card)', border: '1px solid var(--border)',
-                        borderRadius: '16px', color: 'var(--text-primary)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        height: '76px', fontSize: '1.8rem', fontWeight: '500',
+                        background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '24px', color: 'var(--text-primary)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     }}>
                         {n}
                     </button>
                 ))}
                 <div></div>
                 <button onClick={() => handleInput('0')} style={{
-                    height: '64px', fontSize: '1.5rem', fontWeight: '600',
-                    background: 'var(--bg-card)', border: '1px solid var(--border)',
-                    borderRadius: '16px', color: 'var(--text-primary)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    height: '76px', fontSize: '1.8rem', fontWeight: '500',
+                    background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '24px', color: 'var(--text-primary)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                 }}>
                     0
                 </button>
                 <button onClick={handleDelete} style={{
-                    height: '64px', fontSize: '1.1rem', fontWeight: '600',
-                    background: 'rgba(239, 68, 68, 0.05)', border: '1px solid var(--border)',
-                    borderRadius: '16px', color: 'var(--expense)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    height: '76px', fontSize: '1.2rem', fontWeight: '600',
+                    background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '24px', color: 'var(--expense)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)'
                 }}>
                     Del
                 </button>
