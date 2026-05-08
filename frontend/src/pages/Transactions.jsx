@@ -175,15 +175,7 @@ const AddEntry = () => {
         }
     };
 
-    const [showNumpad, setShowNumpad] = useState(true);
 
-    const handleNumpadClick = (val) => {
-        if (val === 'back') {
-            setFormData(prev => ({ ...prev, amount: prev.amount.slice(0, -1) }));
-        } else {
-            setFormData(prev => ({ ...prev, amount: prev.amount + val }));
-        }
-    };
 
     const users = [
         { name: '@Richie', img: 'https://i.pravatar.cc/100?u=1' },
@@ -339,37 +331,30 @@ const AddEntry = () => {
                 </div>
             )}
 
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '3rem', fontWeight: '800', letterSpacing: '-1.5px' }}>
-                    ₹{formData.amount || '0.00'}
-                </h2>
-            </div>
-
-            {/* Custom Numpad */}
-            <div style={{ 
-                background: '#f1f5f9', 
-                borderRadius: '40px', 
-                padding: '32px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '20px',
-                marginBottom: '20px'
-            }}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'back'].map((num, i) => (
-                    <button
-                        key={i}
-                        onClick={() => handleNumpadClick(num)}
+            <div style={{ marginBottom: '24px' }}>
+                <label style={{ fontSize: '0.65rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', paddingLeft: '8px', marginBottom: '8px', display: 'block' }}>Amount (₹)</label>
+                <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: '800', fontSize: '1rem', color: 'black' }}>₹</span>
+                    <input
+                        name="amount"
+                        type="number"
+                        inputMode="decimal"
+                        value={formData.amount}
+                        onChange={handleChange}
+                        required
+                        placeholder="0.00"
                         style={{ 
-                            height: '60px', 
-                            fontSize: '1.5rem', 
-                            fontWeight: '700', 
-                            background: 'transparent', 
-                            color: 'black' 
+                            width: '100%', 
+                            background: '#f1f5f9', 
+                            border: 'none', 
+                            borderRadius: '16px', 
+                            padding: '16px 16px 16px 36px', 
+                            fontSize: '1.25rem', 
+                            fontWeight: '800',
+                            color: 'black'
                         }}
-                    >
-                        {num === 'back' ? '⌫' : num}
-                    </button>
-                ))}
+                    />
+                </div>
             </div>
 
             <button
