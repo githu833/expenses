@@ -140,8 +140,7 @@ const Stats = () => {
         } else {
             // Daily - show hours or just a single bar? Let's just show a simple bar for now or comparison
             return [
-                { name: 'Income', value: totalIncome, fill: 'var(--income)' },
-                { name: 'Expense', value: totalExpense, fill: 'var(--expense)' }
+                { name: 'Today', income: totalIncome, expense: totalExpense }
             ];
         }
     };
@@ -167,7 +166,9 @@ const Stats = () => {
                     textAlign: 'center',
                     boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
                 }}>
-                    <p style={{ opacity: 0.7, marginBottom: '2px' }}>{label} Dec</p>
+                    <p style={{ opacity: 0.7, marginBottom: '2px' }}>
+                        {filter === 'monthly' ? `${label} ${currentDate.toLocaleDateString(undefined, { month: 'short' })}` : label}
+                    </p>
                     <p>₹{payload[0].value.toLocaleString()}</p>
                 </div>
             );
@@ -350,7 +351,10 @@ const Stats = () => {
                                 barSize={24}
                             >
                                 {graphData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#f1f5f9' : 'black'} />
+                                    <Cell 
+                                        key={`cell-${index}`} 
+                                        fill={displayType === 'income' ? 'var(--income)' : (index === graphData.length - 1 ? 'black' : '#e2e8f0')} 
+                                    />
                                 ))}
                             </Bar>
                         </BarChart>
